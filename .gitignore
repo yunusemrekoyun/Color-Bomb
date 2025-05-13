@@ -3,6 +3,8 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
+/[Aa]ssets/[Aa]rt/
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
