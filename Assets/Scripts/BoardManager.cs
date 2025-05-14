@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -13,9 +15,18 @@ public class BoardManager : MonoBehaviour
     {
         allBalloons = new GameObject[width, height];
         GenerateBoard();
+        StartCoroutine(InitialClear());
         // AdjustCamera();
 
 
+    }
+    private IEnumerator InitialClear()
+    {
+        yield return new WaitForSeconds(0.2f); // sahne kurulsun
+        while (CheckAndClearMatches())
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
     }
     void GenerateBoard()
     {
@@ -85,14 +96,40 @@ public class BoardManager : MonoBehaviour
 
         if (!CheckAndClearMatches())
         {
-            // Eşleşme yoksa geri sar
-            SwapBalloons(x1, y1, x2, y2);
+            // Eşleşme yoksa geri sar ama kontrolsüz
+            SwapWithoutCheck(x1, y1, x2, y2);
         }
     }
+    // EKLEDİM
+    private void SwapWithoutCheck(int x1, int y1, int x2, int y2)
+    {
+        GameObject b1 = allBalloons[x1, y1];
+        GameObject b2 = allBalloons[x2, y2];
+
+        if (b1 == null || b2 == null) return;
+
+        BalloonItem item1 = b1.GetComponent<BalloonItem>();
+        BalloonItem item2 = b2.GetComponent<BalloonItem>();
+
+        allBalloons[x1, y1] = b2;
+        allBalloons[x2, y2] = b1;
+
+        item1.x = x2;
+        item1.y = y2;
+
+        item2.x = x1;
+        item2.y = y1;
+
+        item1.MoveTo(new Vector3(x2 * spacing, y2 * spacing, 0));
+        item2.MoveTo(new Vector3(x1 * spacing, y1 * spacing, 0));
+    }
+    //EKLEDİM
+
     private bool CheckAndClearMatches()
     {
         bool matchFound = false;
         bool[,] matched = new bool[width, height];
+        List<Vector2Int> allMatches = new List<Vector2Int>();
 
         // Satır kontrolü
         for (int y = 0; y < height; y++)
@@ -106,10 +143,12 @@ public class BoardManager : MonoBehaviour
                 if (b1 != null && b2 != null && b3 != null &&
                     b1.tag == b2.tag && b2.tag == b3.tag)
                 {
-                    matched[x, y] = true;
-                    matched[x + 1, y] = true;
-                    matched[x + 2, y] = true;
-                    matchFound = true;
+                    var connected = FindConnectedMatches(x, y, b1.tag);
+                    foreach (var pos in connected)
+                    {
+                        if (!allMatches.Contains(pos))
+                            allMatches.Add(pos);
+                    }
                 }
             }
         }
@@ -126,22 +165,31 @@ public class BoardManager : MonoBehaviour
                 if (b1 != null && b2 != null && b3 != null &&
                     b1.tag == b2.tag && b2.tag == b3.tag)
                 {
-                    matched[x, y] = true;
-                    matched[x, y + 1] = true;
-                    matched[x, y + 2] = true;
-                    matchFound = true;
+                    var connected = FindConnectedMatches(x, y, b1.tag);
+                    foreach (var pos in connected)
+                    {
+                        if (!allMatches.Contains(pos))
+                            allMatches.Add(pos);
+                    }
                 }
             }
         }
 
+        // matched dizisine işle
+        foreach (var pos in allMatches)
+        {
+            matched[pos.x, pos.y] = true;
+            matchFound = true;
+        }
+
         if (matchFound)
         {
-            // Coroutine başlat yok etmek için
             StartCoroutine(DestroyMatched(matched));
         }
 
         return matchFound;
     }
+
     private void DropBalloons()
     {
         for (int x = 0; x < width; x++)
@@ -214,6 +262,7 @@ public class BoardManager : MonoBehaviour
                 {
                     Destroy(allBalloons[x, y]);
                     allBalloons[x, y] = null;
+                    ScoreManager.Instance.AddScore(10); // PUAN EKLE
                     yield return new WaitForSeconds(0.05f); // küçük efekt gecikmesi
                 }
             }
@@ -223,6 +272,38 @@ public class BoardManager : MonoBehaviour
         DropBalloons();
     }
 
+
+    List<Vector2Int> FindConnectedMatches(int startX, int startY, string tag)
+    {
+        List<Vector2Int> connected = new List<Vector2Int>();
+        bool[,] visited = new bool[width, height];
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        queue.Enqueue(new Vector2Int(startX, startY));
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+            int x = current.x;
+            int y = current.y;
+
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                continue;
+
+            if (visited[x, y] || allBalloons[x, y] == null || allBalloons[x, y].tag != tag)
+                continue;
+
+            visited[x, y] = true;
+            connected.Add(current);
+
+            // 4 yönlü komşular
+            queue.Enqueue(new Vector2Int(x + 1, y));
+            queue.Enqueue(new Vector2Int(x - 1, y));
+            queue.Enqueue(new Vector2Int(x, y + 1));
+            queue.Enqueue(new Vector2Int(x, y - 1));
+        }
+
+        return connected;
+    }
 
 
 
