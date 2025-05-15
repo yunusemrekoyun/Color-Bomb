@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
+    [System.Serializable]
+    public struct BlockedPosition
+    {
+        public int x;
+        public int y;
+    }
+
+    public List<BlockedPosition> blockedPositions = new List<BlockedPosition>();
     public GameObject[] balloonPrefabs;
     public int width = 8;
     public int height = 9;
@@ -20,6 +28,7 @@ public class BoardManager : MonoBehaviour
         GenerateBoard();
         StartCoroutine(InitialClear());
         ResetIdleTimer();
+        ValidateBlockedPositions();
     }
 
     void Update()
@@ -135,16 +144,36 @@ public class BoardManager : MonoBehaviour
         while (CheckAndClearMatches())
             yield return new WaitForSeconds(0.5f);
     }
+    void ValidateBlockedPositions()
+    {
+        foreach (var pos in blockedPositions)
+        {
+            if (pos.x < 0 || pos.x >= width || pos.y < 0 || pos.y >= height)
+            {
+                Debug.LogWarning($"❗Blocked position ({pos.x},{pos.y}) is outside the grid bounds.");
+            }
+        }
+    }
 
     void GenerateBoard()
     {
+
+
         StartCoroutine(CheckBoardHasMoves());
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
+                // BLOCKED pozisyon kontrolü
+                bool isBlocked = blockedPositions.Exists(pos => pos.x == x && pos.y == y);
+                if (isBlocked)
+                {
+                    continue;
+                }
+
                 Vector2 spawnPosition = new Vector2(x * spacing, y * spacing);
 
+                // Arkaplan
                 if (itemBackgroundPrefab != null)
                 {
                     GameObject background = Instantiate(itemBackgroundPrefab, spawnPosition, Quaternion.identity);
@@ -153,6 +182,7 @@ public class BoardManager : MonoBehaviour
                     background.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 1f);
                 }
 
+                // Balon
                 int randomBalloon = Random.Range(0, balloonPrefabs.Length);
                 GameObject balloon = Instantiate(balloonPrefabs[randomBalloon], spawnPosition, Quaternion.identity);
                 balloon.transform.parent = this.transform;
@@ -191,8 +221,8 @@ public class BoardManager : MonoBehaviour
         return FindFirstValidSwap().HasValue;
     }
 
-  
-   
+
+
     public void SwapBalloons(int x1, int y1, int x2, int y2)
     {
         GameObject b1 = allBalloons[x1, y1];
@@ -328,31 +358,42 @@ public class BoardManager : MonoBehaviour
 
             for (int y = 0; y < height; y++)
             {
+                // ❌ Blocked pozisyon ise devam
+                if (blockedPositions.Exists(p => p.x == x && p.y == y))
+                    continue;
+
                 if (allBalloons[x, y] == null)
                 {
                     if (emptyY == -1) emptyY = y;
                 }
                 else if (emptyY != -1)
                 {
-                    // Balonu aşağı taşı
-                    allBalloons[x, emptyY] = allBalloons[x, y];
-                    allBalloons[x, y] = null;
+                    // ✅ Aşağı kaydır
+                    if (!blockedPositions.Exists(p => p.x == x && p.y == emptyY))
+                    {
+                        allBalloons[x, emptyY] = allBalloons[x, y];
+                        allBalloons[x, y] = null;
 
-                    BalloonItem b = allBalloons[x, emptyY].GetComponent<BalloonItem>();
-                    b.x = x;
-                    b.y = emptyY;
+                        BalloonItem b = allBalloons[x, emptyY].GetComponent<BalloonItem>();
+                        b.x = x;
+                        b.y = emptyY;
 
-                    b.MoveTo(new Vector3(x * spacing, emptyY * spacing, 0));
-                    emptyY++;
+                        b.MoveTo(new Vector3(x * spacing, emptyY * spacing, 0));
+                        emptyY++;
+
+                        // 🔁 Boşluk takip için bir sonrakini bul
+                        while (emptyY < height && blockedPositions.Exists(p => p.x == x && p.y == emptyY))
+                            emptyY++;
+                    }
                 }
             }
 
-            // Yeni balonları en üstten oluştur
+            // ❗ Spawn sadece block olmayan yerlere
             for (int y = height - 1; y >= 0; y--)
             {
-                if (allBalloons[x, y] == null)
+                if (allBalloons[x, y] == null && !blockedPositions.Exists(p => p.x == x && p.y == y))
                 {
-                    Vector2 spawnPos = new Vector2(x * spacing, (y + height) * spacing); // yukarıda başlasın
+                    Vector2 spawnPos = new Vector2(x * spacing, (y + height) * spacing);
                     int rand = Random.Range(0, balloonPrefabs.Length);
                     GameObject newBalloon = Instantiate(balloonPrefabs[rand], spawnPos, Quaternion.identity);
                     newBalloon.transform.parent = this.transform;
@@ -367,7 +408,6 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // Yeni düşenler eşleşti mi tekrar kontrol et
         StartCoroutine(ClearAfterFall());
     }
 
