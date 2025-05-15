@@ -83,6 +83,10 @@ public class BalloonItem : MonoBehaviour
             else if (delta.y < 0 && y > 0)
                 board.SwapBalloons(x, y, x, y - 1); // aşağı
         }
+        if (board != null)
+        {
+            board.ResetIdleTimer(); // kullanıcı hamle yaptı  süreyi sıfırla
+        }
     }
 
     public void MoveTo(Vector3 target)
