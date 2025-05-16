@@ -148,6 +148,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b446bdc8515b34550b2410cc7752cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockedPositions:
+  - x: 3
+    y: 2
+  - x: 6
+    y: 7
+  - x: 2
+    y: 3
+  - x: 1
+    y: 6
   balloonPrefabs:
   - {fileID: 7089682500877477219, guid: c3513ab664dc34a78b21fae17cf221bf, type: 3}
   - {fileID: 80488115603686140, guid: fba7825b8805a4008b7628e9cdcf673c, type: 3}
