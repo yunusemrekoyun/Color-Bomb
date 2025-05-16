@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      RadialShine_0: 6139878853065086487
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
