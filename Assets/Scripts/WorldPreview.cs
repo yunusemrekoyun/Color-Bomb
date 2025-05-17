@@ -29,7 +29,9 @@ public class WorldPreview : MonoBehaviour
 
     void OnWorldSelected()
     {
+        Debug.Log("WORLD " + (worldIndex + 1) + " SEÇÝLDÝ");
         PlayerPrefs.SetInt("SelectedWorld", worldIndex); // Hangi dünya seçildiðini kaydet
+        
         SceneManager.LoadScene("LevelSelectScene");
     }
 

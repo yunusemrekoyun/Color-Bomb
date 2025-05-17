@@ -8,10 +8,12 @@ public class LevelLayoutController : MonoBehaviour
 
     void Start()
     {
+
         LevelButton[] buttons = GetComponentsInChildren<LevelButton>();
 
         foreach (LevelButton btn in buttons)
         {
+            btn.SetStars(btn.levelNumber % 4); // 0–3 arasýnda yýldýz verir, test için
             string state = "locked";
 
             if (btn.levelNumber < playerCurrentLevel)
