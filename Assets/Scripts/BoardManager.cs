@@ -10,7 +10,9 @@ public class BoardManager : MonoBehaviour
         public int x;
         public int y;
     }
-
+    public GameObject verticalSpecialItemPrefab;
+    private float offsetX;
+    private float offsetY;
     public List<BlockedPosition> blockedPositions = new List<BlockedPosition>();
     public GameObject[] balloonPrefabs;
     public int width = 8;
@@ -25,7 +27,10 @@ public class BoardManager : MonoBehaviour
     void Start()
     {
 
+
         allBalloons = new GameObject[width, height];
+        offsetX = -(width - 1) * spacing / 2f;
+        offsetY = -(height - 1) * spacing / 2f;
         GenerateBoard();
         StartCoroutine(InitialClear());
         ResetIdleTimer();
@@ -201,14 +206,15 @@ public class BoardManager : MonoBehaviour
                     continue;
                 }
 
-                Vector2 spawnPosition = new Vector2(x * spacing, y * spacing);
+
+                Vector2 spawnPosition = new Vector2(x * spacing + offsetX, y * spacing + offsetY);
 
                 // Arkaplan
                 if (itemBackgroundPrefab != null)
                 {
                     GameObject background = Instantiate(itemBackgroundPrefab, spawnPosition, Quaternion.identity);
                     background.transform.parent = this.transform;
-                    background.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
+                    // background.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
                     background.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 1f);
                 }
 
@@ -224,8 +230,12 @@ public class BoardManager : MonoBehaviour
                     balloonScript.x = x;
                     balloonScript.y = y;
                 }
+
             }
+
         }
+
+        // AdjustCameraToGrid();
     }
 
 
@@ -282,8 +292,8 @@ public class BoardManager : MonoBehaviour
         item2.x = x1;
         item2.y = y1;
 
-        item1.MoveTo(new Vector3(x2 * spacing, y2 * spacing, 0));
-        item2.MoveTo(new Vector3(x1 * spacing, y1 * spacing, 0));
+        item1.MoveTo(new Vector3(x2 * spacing + offsetX, y2 * spacing + offsetY, 0));
+        item2.MoveTo(new Vector3(x1 * spacing + offsetX, y1 * spacing + offsetY, 0));
 
         // Kontrol et
         StartCoroutine(CheckMatchAfterSwap(x1, y1, x2, y2));
@@ -327,14 +337,14 @@ public class BoardManager : MonoBehaviour
         item2.x = x1;
         item2.y = y1;
 
-        item1.MoveTo(new Vector3(x2 * spacing, y2 * spacing, 0));
-        item2.MoveTo(new Vector3(x1 * spacing, y1 * spacing, 0));
+        item1.MoveTo(new Vector3(x2 * spacing + offsetX, y2 * spacing + offsetY, 0));
+        item2.MoveTo(new Vector3(x1 * spacing + offsetX, y1 * spacing + offsetY, 0));
     }
     /*******************************
         EŞLEŞMELERİ KONTROL ET VE TEMİZLE
         (ÖZEL)
     *******************************/
-   private bool CheckAndClearMatches()
+    private bool CheckAndClearMatches()
     {
         bool matchFound = false;
         bool[,] matched = new bool[width, height];
@@ -342,19 +352,19 @@ public class BoardManager : MonoBehaviour
         // Satır kontrolü
         for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < width - 2; x++)
+            for (int x = 0; x < width - 3; x++) // 4’lü kontrol
             {
                 GameObject b1 = allBalloons[x, y];
                 GameObject b2 = allBalloons[x + 1, y];
                 GameObject b3 = allBalloons[x + 2, y];
+                GameObject b4 = allBalloons[x + 3, y];
 
-                if (b1 != null && b2 != null && b3 != null &&
-                    b1.tag == b2.tag && b2.tag == b3.tag)
+                if (b1 != null && b2 != null && b3 != null && b4 != null &&
+                    b1.tag == b2.tag && b2.tag == b3.tag && b3.tag == b4.tag)
                 {
-                    matched[x, y] = true;
-                    matched[x + 1, y] = true;
-                    matched[x + 2, y] = true;
-                    matchFound = true;
+                    // Eşleşen balonları merkez item'a doğru çekerek yok et
+                    StartCoroutine(MergeAndDestroy(new List<GameObject> { b1, b2, b3, b4 }, x + 1, y));
+                    return true; // bu eşleşmeyle işimiz bitti
                 }
             }
         }
@@ -421,7 +431,8 @@ public class BoardManager : MonoBehaviour
                         b.x = x;
                         b.y = emptyY;
 
-                        b.MoveTo(new Vector3(x * spacing, emptyY * spacing, 0));
+                        b.MoveTo(new Vector3(x * spacing + offsetX, emptyY * spacing + offsetY, 0));
+
                         emptyY++;
 
                         // 🔁 Boşluk takip için bir sonrakini bul
@@ -436,7 +447,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (allBalloons[x, y] == null && !blockedPositions.Exists(p => p.x == x && p.y == y))
                 {
-                    Vector2 spawnPos = new Vector2(x * spacing, (y + height) * spacing);
+                    Vector2 spawnPos = new Vector2(x * spacing + offsetX, (y + height) * spacing + offsetY);
                     int rand = Random.Range(0, balloonPrefabs.Length);
                     GameObject newBalloon = Instantiate(balloonPrefabs[rand], spawnPos, Quaternion.identity);
                     newBalloon.transform.parent = this.transform;
@@ -446,7 +457,8 @@ public class BoardManager : MonoBehaviour
                     BalloonItem b = newBalloon.GetComponent<BalloonItem>();
                     b.x = x;
                     b.y = y;
-                    b.MoveTo(new Vector3(x * spacing, y * spacing, 0));
+                    b.MoveTo(new Vector3(x * spacing + offsetX, y * spacing + offsetY, 0));
+
                 }
             }
         }
@@ -493,44 +505,59 @@ public class BoardManager : MonoBehaviour
         DropBalloons();
     }
 
-    /*******************************
-        EŞLEŞEN BALONLARI BUL
-        (ÖZEL)
-        Bu fonksiyon, eşleşen balonları bulur ve döndürür.
-    *******************************/
-    // List<Vector2Int> FindConnectedMatches(int startX, int startY, string tag)
-    // {
-    //     List<Vector2Int> connected = new List<Vector2Int>();
-    //     bool[,] visited = new bool[width, height];
-    //     Queue<Vector2Int> queue = new Queue<Vector2Int>();
-    //     queue.Enqueue(new Vector2Int(startX, startY));
 
-    //     while (queue.Count > 0)
-    //     {
-    //         Vector2Int current = queue.Dequeue();
-    //         int x = current.x;
-    //         int y = current.y;
+    private IEnumerator MergeAndDestroy(List<GameObject> items, int centerX, int centerY)
+    {
+        Vector3 targetPos = new Vector3(centerX * spacing + offsetX, centerY * spacing + offsetY, 0);
 
-    //         if (x < 0 || x >= width || y < 0 || y >= height)
-    //             continue;
+        // Hareket etme süresi
+        float duration = 0.2f;
+        float t = 0f;
 
-    //         if (visited[x, y] || allBalloons[x, y] == null || allBalloons[x, y].tag != tag)
-    //             continue;
+        Vector3[] starts = new Vector3[items.Count];
+        for (int i = 0; i < items.Count; i++)
+            starts[i] = items[i].transform.position;
 
-    //         visited[x, y] = true;
-    //         connected.Add(current);
+        while (t < 1f)
+        {
+            t += Time.deltaTime / duration;
+            for (int i = 0; i < items.Count; i++)
+                items[i].transform.position = Vector3.Lerp(starts[i], targetPos, t);
+            yield return null;
+        }
 
-    //         // 4 yönlü komşular
-    //         queue.Enqueue(new Vector2Int(x + 1, y));
-    //         queue.Enqueue(new Vector2Int(x - 1, y));
-    //         queue.Enqueue(new Vector2Int(x, y + 1));
-    //         queue.Enqueue(new Vector2Int(x, y - 1));
-    //     }
+        // Hepsini yok et
+        foreach (GameObject g in items)
+        {
+            Destroy(g);
+        }
 
-    //     return connected;
-    // }
+        // Grid’i güncelle
+        foreach (GameObject g in items)
+        {
+            BalloonItem b = g.GetComponent<BalloonItem>();
+            if (b != null)
+                allBalloons[b.x, b.y] = null;
+        }
 
+        // Özel item oluştur
+        if (verticalSpecialItemPrefab != null)
+        {
+            GameObject special = Instantiate(verticalSpecialItemPrefab, targetPos, Quaternion.identity);
+            special.transform.parent = this.transform;
 
+            BalloonItem b = special.GetComponent<BalloonItem>();
+            if (b != null)
+            {
+                b.x = centerX;
+                b.y = centerY;
+            }
+            allBalloons[centerX, centerY] = special;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+        DropBalloons();
+    }
 
 
 }

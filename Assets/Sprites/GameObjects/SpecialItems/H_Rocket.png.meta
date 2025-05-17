@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 609c91f80ebbefe4ba5b14e7e4b05e11
+guid: 73b3767a2fd434a8fbf3072ccc9ad199
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2417718169706831085
-    second: TopPanel_0
+      213: -4083818360515885894
+    second: H_Rocket_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,19 +97,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -126,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TopPanel_0
+      name: H_Rocket_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1440
-        height: 356
+        width: 186
+        height: 126
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 313ed9f522a827ed0800000000000000
-      internalID: -2417718169706831085
+      spriteID: ab48b3e86dc5357c0800000000000000
+      internalID: -4083818360515885894
       vertices: []
       indices: 
       edges: []
@@ -161,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TopPanel_0: -2417718169706831085
+      H_Rocket_0: -4083818360515885894
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
