@@ -148,14 +148,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b446bdc8515b34550b2410cc7752cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticalSpecialItemPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
-  blockedPositions: []
   balloonPrefabs:
   - {fileID: 7089682500877477219, guid: c3513ab664dc34a78b21fae17cf221bf, type: 3}
   - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
   - {fileID: 1871865563560443095, guid: de1e274f10f6b4578b127e743ee039b3, type: 3}
+  - {fileID: 1254757422344675222, guid: f5b19e7330e884413a77367166bb366e, type: 3}
+  - {fileID: 4682285765965569786, guid: 33d77cca8977541a2966b473ff7ac578, type: 3}
+  blockedPositions: []
+  horizontal5SpecialPrefab: {fileID: 7030282372386337094, guid: 010c625febb324f06a53f3843a92fc1d, type: 3}
+  vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
+  square4SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
+  horizontal4SpecialPrefab: {fileID: 7030282372386337094, guid: 19726eeb8bb304e63ba42a18396f7eac, type: 3}
+  vertical4SpecialPrefab: {fileID: 7030282372386337094, guid: b07ea99ead18d4e23b2e5869fe6d3a2b, type: 3}
   width: 6
-  height: 7
+  height: 8
   spacing: 3
   itemBackgroundPrefab: {fileID: 388787130618852923, guid: 31efe7e584b234a7cb35d67e8dd67862, type: 3}
   hintDelay: 5
@@ -168,7 +174,7 @@ Transform:
   m_GameObject: {fileID: 66861608}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -8.3, y: 9.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
