@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -7225344776892461658}
   - component: {fileID: 2391967476564605092}
   m_Layer: 3
-  m_Name: BallonItem
+  m_Name: BlackBallonItem
   m_TagString: Black
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4682285765965569786}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.3768435, y: 0.68247247, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []

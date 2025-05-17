@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 73b3767a2fd434a8fbf3072ccc9ad199
+guid: dee14d85027674cb9a2812f8595b79af
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4083818360515885894
-    second: H_Rocket_0
+      213: -1483665779731714255
+    second: Bomb_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: H_Rocket_0
+      name: Bomb_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 186
-        height: 126
+        width: 151
+        height: 189
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ab48b3e86dc5357c0800000000000000
-      internalID: -4083818360515885894
+      spriteID: 13f20b985d5f86be0800000000000000
+      internalID: -1483665779731714255
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 96ab03f083a0649bd9a3b4305ff56a87
+    spriteID: 58b4441d5d4c74292840470ffdd3aa55
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      H_Rocket_0: -4083818360515885894
+      Bomb_0: -1483665779731714255
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
