@@ -1,21 +1,32 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelLayoutController : MonoBehaviour
 {
-    public List<GameObject> worldLayouts;
+    public int playerCurrentLevel = 2;
+
+    public Sprite lockedSprite, completedSprite, currentSprite, targetSprite;
 
     void Start()
     {
-        int selectedWorld = PlayerPrefs.GetInt("SelectedWorld", 0);
-        ShowOnlySelectedWorld(selectedWorld);
-    }
+        LevelButton[] buttons = GetComponentsInChildren<LevelButton>();
 
-    void ShowOnlySelectedWorld(int index)
-    {
-        for (int i = 0; i < worldLayouts.Count; i++)
+        foreach (LevelButton btn in buttons)
         {
-            worldLayouts[i].SetActive(i == index);
+            string state = "locked";
+
+            if (btn.levelNumber < playerCurrentLevel)
+                state = "completed";
+            else if (btn.levelNumber == playerCurrentLevel)
+                state = "current";
+            else if (btn.levelNumber == playerCurrentLevel + 1)
+                state = "target";
+
+            btn.lockedSprite = lockedSprite;
+            btn.completedSprite = completedSprite;
+            btn.currentSprite = currentSprite;
+            btn.targetSprite = targetSprite;
+
+            btn.SetState(state);
         }
     }
 }
