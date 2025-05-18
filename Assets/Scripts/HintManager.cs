@@ -1,5 +1,5 @@
-// HintManager.cs
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(GameBoard))]
@@ -24,23 +24,21 @@ public class HintManager : MonoBehaviour
 
     private void ShowHint()
     {
-        var match = GetComponent<MatchManager>().GetFirstValidSwap();
+        var match = GetComponent<MatchManager>().GetBestValidSwapWithMatches();
 
         if (match.HasValue)
         {
-            HighlightBalloon(match.Value.Item1.x, match.Value.Item1.y);
-            HighlightBalloon(match.Value.Item2.x, match.Value.Item2.y);
+            List<GameObject> matchedItems = match.Value.matchedItems;
+            foreach (GameObject balloon in matchedItems)
+            {
+                if (balloon == null) continue;
+                var sr = balloon.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                    StartCoroutine(HintBlink(sr));
+            }
         }
     }
 
-    private void HighlightBalloon(int x, int y)
-    {
-        var b = board.allBalloons[x, y];
-        if (b == null) return;
-        var sr = b.GetComponent<SpriteRenderer>();
-        if (sr != null)
-            StartCoroutine(HintBlink(sr));
-    }
 
     private IEnumerator HintBlink(SpriteRenderer sr)
     {
