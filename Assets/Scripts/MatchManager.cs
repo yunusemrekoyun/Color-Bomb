@@ -91,156 +91,179 @@ public class MatchManager : MonoBehaviour
 
 
     private bool TrySimulateSwap(int x1, int y1, int x2, int y2, out List<GameObject> matched)
+{
+    matched = new List<GameObject>();
+
+    var b1 = board.allBalloons[x1, y1];
+    var b2 = board.allBalloons[x2, y2];
+
+    // SpecialItem Dahil
+    if (b1 == null || b2 == null) return false;
+    if (b1.GetComponent<SpecialItem>() != null || b2.GetComponent<SpecialItem>() != null)
+    return false;
+
+    board.allBalloons[x1, y1] = b2;
+    board.allBalloons[x2, y2] = b1;
+
+    matched = FindMatchesAt(x1, y1);
+    matched.AddRange(FindMatchesAt(x2, y2));
+    matched = new HashSet<GameObject>(matched).ToList();
+
+    board.allBalloons[x1, y1] = b1;
+    board.allBalloons[x2, y2] = b2;
+
+    if (matched.Count < 3 || !AllSameTag(matched))
     {
-        matched = new List<GameObject>();
-
-        var b1 = board.allBalloons[x1, y1];
-        var b2 = board.allBalloons[x2, y2];
-        if (b1 == null || b2 == null) return false;
-
-        board.allBalloons[x1, y1] = b2;
-        board.allBalloons[x2, y2] = b1;
-
-        matched = FindMatchesAt(x1, y1);
-        matched.AddRange(FindMatchesAt(x2, y2));
-        matched = new HashSet<GameObject>(matched).ToList();
-
-        board.allBalloons[x1, y1] = b1;
-        board.allBalloons[x2, y2] = b2;
-
-        return matched.Count >= 3;
-    }
-
-    private List<GameObject> FindMatchesAt(int x, int y)
-    {
-        var result = new List<GameObject>();
-        var center = board.allBalloons[x, y];
-        if (center == null) return result;
-
-        string tag = center.tag;
-
-        List<GameObject> horiz = new List<GameObject> { center };
-        for (int i = x - 1; i >= 0 && board.allBalloons[i, y]?.tag == tag; i--)
-            horiz.Add(board.allBalloons[i, y]);
-        for (int i = x + 1; i < board.width && board.allBalloons[i, y]?.tag == tag; i++)
-            horiz.Add(board.allBalloons[i, y]);
-        if (horiz.Count >= 3) result.AddRange(horiz);
-
-        List<GameObject> vert = new List<GameObject> { center };
-        for (int i = y - 1; i >= 0 && board.allBalloons[x, i]?.tag == tag; i--)
-            vert.Add(board.allBalloons[x, i]);
-        for (int i = y + 1; i < board.height && board.allBalloons[x, i]?.tag == tag; i++)
-            vert.Add(board.allBalloons[x, i]);
-        if (vert.Count >= 3) result.AddRange(vert);
-
-        return result;
-    }
-
-    public bool CheckAndClearMatches()
-    {
-        for (int y = 0; y < board.height; y++)
-            for (int x = 0; x <= board.width - 5; x++)
-                if (TryMatchLine(x, y, 1, 0, 5, MatchState.Horizontal5, board.horizontal5SpecialPrefab))
-                    return true;
-
-        for (int x = 0; x < board.width; x++)
-            for (int y = 0; y <= board.height - 5; y++)
-                if (TryMatchLine(x, y, 0, 1, 5, MatchState.Vertical5, board.vertical5SpecialPrefab))
-                    return true;
-
-        for (int x = 0; x < board.width - 1; x++)
-        {
-            for (int y = 0; y < board.height - 1; y++)
-            {
-                var a = board.allBalloons[x, y];
-                var b = board.allBalloons[x + 1, y];
-                var c = board.allBalloons[x, y + 1];
-                var d = board.allBalloons[x + 1, y + 1];
-
-                // hepsi var mý?
-                if (a == null || b == null || c == null || d == null)
-                    continue;
-
-                // eðer herhangi biri special ise atla
-                if (a.GetComponent<SpecialItem>() != null ||
-                    b.GetComponent<SpecialItem>() != null ||
-                    c.GetComponent<SpecialItem>() != null ||
-                    d.GetComponent<SpecialItem>() != null)
-                    continue;
-
-                // tag’larý ayný mý?
-                string tag = a.tag;
-                if (b.tag != tag || c.tag != tag || d.tag != tag)
-                    continue;
-
-                // eþleþme bulundu
-                currentState = MatchState.Square4;
-                var items = new List<GameObject> { a, b, c, d };
-
-                // spawn merkezi: ortadaki hücre
-                int sx = x + 1, sy = y + 1;
-                mergeManager.StartMerge(items, sx, sy, board.square4SpecialPrefab);
-                currentState = MatchState.None;
-                    return true;
-                }
-            }
-
-        for (int y = 0; y < board.height; y++)
-            for (int x = 0; x <= board.width - 4; x++)
-                if (TryMatchLine(x, y, 1, 0, 4, MatchState.Horizontal4, board.horizontal4SpecialPrefab))
-                    return true;
-
-        for (int x = 0; x < board.width; x++)
-            for (int y = 0; y <= board.height - 4; y++)
-                if (TryMatchLine(x, y, 0, 1, 4, MatchState.Vertical4, board.vertical4SpecialPrefab))
-                    return true;
-
-        for (int y = 0; y < board.height; y++)
-            for (int x = 0; x <= board.width - 3; x++)
-                if (TryMatchLine(x, y, 1, 0, 3, MatchState.Horizontal3, null))
-                    return true;
-
-        for (int x = 0; x < board.width; x++)
-            for (int y = 0; y <= board.height - 3; y++)
-                if (TryMatchLine(x, y, 0, 1, 3, MatchState.Vertical3, null))
-                    return true;
-
+        matched.Clear();
         return false;
     }
 
-    private bool TryMatchLine(int startX, int startY, int dx, int dy, int len,
-                              MatchState state, GameObject specialPrefab)
+    return true;
+}
+
+private bool AllSameTag(List<GameObject> items)
+{
+    if (items.Count == 0) return false;
+    string tag = items[0].tag;
+    foreach (var item in items)
     {
-        var first = board.allBalloons[startX, startY];
-        if (first == null) return false;
-        // eðer ilk obje special ise atla
-        if (first.GetComponent<SpecialItem>() != null)
+        if (item == null || item.tag != tag)
             return false;
+    }
+    return true;
+}
 
-        string tag = first.tag;
+private List<GameObject> FindMatchesAt(int x, int y)
+{
+    var result = new List<GameObject>();
+    var center = board.allBalloons[x, y];
+    if (center == null) return result;
 
-        // diðer taþlar da dolu, ayný tag’te ve special deðil mi?
-        for (int i = 1; i < len; i++)
+    string tag = center.tag;
+    List<GameObject> horiz = new List<GameObject> { center };
+    for (int i = x - 1; i >= 0 && board.allBalloons[i, y]?.tag == tag; i--)
+        horiz.Add(board.allBalloons[i, y]);
+    for (int i = x + 1; i < board.width && board.allBalloons[i, y]?.tag == tag; i++)
+        horiz.Add(board.allBalloons[i, y]);
+    if (horiz.Count >= 3)
+        result.AddRange(horiz);
+
+    List<GameObject> vert = new List<GameObject> { center };
+    for (int i = y - 1; i >= 0 && board.allBalloons[x, i]?.tag == tag; i--)
+        vert.Add(board.allBalloons[x, i]);
+    for (int i = y + 1; i < board.height && board.allBalloons[x, i]?.tag == tag; i++)
+        vert.Add(board.allBalloons[x, i]);
+    if (vert.Count >= 3)
+        result.AddRange(vert);
+
+    // EÄŸer yatay ve dikey eÅŸleÅŸme yoksa boÅŸ liste dÃ¶n
+    if (result.Count < 3)
+        result.Clear();
+
+    return result;
+}
+
+    public bool CheckAndClearMatches()
+{
+    HashSet<GameObject> matchedSet = new HashSet<GameObject>();
+
+    List<(List<GameObject> items, int spawnX, int spawnY, GameObject specialPrefab)> allMatches =
+        new List<(List<GameObject>, int, int, GameObject)>();
+
+    // YardÄ±mcÄ± fonksiyonlar Ã§aÄŸrÄ±lÄ±rken sadece yeni balonlar toplansÄ±n
+    void AddMatch(List<GameObject> match, int spawnX, int spawnY, GameObject specialPrefab)
+    {
+        bool alreadyIncluded = false;
+        foreach (var obj in match)
         {
-            var go = board.allBalloons[startX + dx * i, startY + dy * i];
-            if (go == null) return false;
-            if (go.GetComponent<SpecialItem>() != null) return false;
-            if (go.tag != tag) return false;
+            if (matchedSet.Contains(obj))
+            {
+                alreadyIncluded = true;
+                break;
+            }
+        }
+        if (!alreadyIncluded)
+        {
+            foreach (var obj in match) matchedSet.Add(obj);
+            allMatches.Add((match, spawnX, spawnY, specialPrefab));
+        }
+    }
+
+    // Yatay ve dikey 5'li
+    for (int y = 0; y < board.height; y++)
+        for (int x = 0; x <= board.width - 5; x++)
+            TryMatchLine(x, y, 1, 0, 5, board.horizontal5SpecialPrefab, AddMatch);
+    for (int x = 0; x < board.width; x++)
+        for (int y = 0; y <= board.height - 5; y++)
+            TryMatchLine(x, y, 0, 1, 5, board.vertical5SpecialPrefab, AddMatch);
+
+    // 2x2 Square
+    for (int x = 0; x < board.width - 1; x++)
+        for (int y = 0; y < board.height - 1; y++)
+        {
+            var a = board.allBalloons[x, y];
+            var b = board.allBalloons[x + 1, y];
+            var c = board.allBalloons[x, y + 1];
+            var d = board.allBalloons[x + 1, y + 1];
+            if (a && b && c && d && a.tag == b.tag && a.tag == c.tag && a.tag == d.tag)
+            {
+                var list = new List<GameObject> { a, b, c, d };
+                AddMatch(list, x + 1, y + 1, board.square4SpecialPrefab);
+            }
         }
 
-        // eþleþme bulundu
-        currentState = state;
-        var items = new List<GameObject>();
-        for (int i = 0; i < len; i++)
-            items.Add(board.allBalloons[startX + dx * i, startY + dy * i]);
+    // 4'lÃ¼
+    for (int y = 0; y < board.height; y++)
+        for (int x = 0; x <= board.width - 4; x++)
+            TryMatchLine(x, y, 1, 0, 4, board.horizontal4SpecialPrefab, AddMatch);
+    for (int x = 0; x < board.width; x++)
+        for (int y = 0; y <= board.height - 4; y++)
+            TryMatchLine(x, y, 0, 1, 4, board.vertical4SpecialPrefab, AddMatch);
 
-        int cx = startX + dx * ((len - 1) / 2);
-        int cy = startY + dy * ((len - 1) / 2);
-        mergeManager.StartMerge(items, cx, cy, specialPrefab);
+    // 3'lÃ¼
+    for (int y = 0; y < board.height; y++)
+        for (int x = 0; x <= board.width - 3; x++)
+            TryMatchLine(x, y, 1, 0, 3, null, AddMatch);
+    for (int x = 0; x < board.width; x++)
+        for (int y = 0; y <= board.height - 3; y++)
+            TryMatchLine(x, y, 0, 1, 3, null, AddMatch);
 
-        currentState = MatchState.None;
+    // EÄŸer eÅŸleÅŸme varsa â†’ hepsini aynÄ± anda iÅŸle
+    if (allMatches.Count > 0)
+    {
+        foreach (var match in allMatches)
+        {
+            mergeManager.StartMerge(match.items, match.spawnX, match.spawnY, match.specialPrefab);
+        }
         return true;
     }
+
+    return false;
+}
+
+    private void TryMatchLine(int startX, int startY, int dx, int dy, int len,
+                          GameObject specialPrefab,
+                          System.Action<List<GameObject>, int, int, GameObject> onMatch)
+{
+    var first = board.allBalloons[startX, startY];
+    if (first == null) return;
+    string tag = first.tag;
+
+    for (int i = 1; i < len; i++)
+    {
+        var other = board.allBalloons[startX + dx * i, startY + dy * i];
+        if (other == null || other.tag != tag)
+            return;
+    }
+
+    var match = new List<GameObject>();
+    for (int i = 0; i < len; i++)
+        match.Add(board.allBalloons[startX + dx * i, startY + dy * i]);
+
+    int spawnX = startX + dx * ((len - 1) / 2);
+    int spawnY = startY + dy * ((len - 1) / 2);
+    onMatch?.Invoke(match, spawnX, spawnY, specialPrefab);
+}
 
     private bool CheckMatchExists(int x, int y)
     {

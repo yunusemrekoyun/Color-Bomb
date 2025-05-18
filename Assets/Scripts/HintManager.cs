@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(GameBoard))]
 public class HintManager : MonoBehaviour
 {
+    private (Vector2Int from, Vector2Int to, List<GameObject> matchedItems)? cachedHint = null;
     private GameBoard board;
     private float idleTimer;
 
@@ -20,25 +21,28 @@ public class HintManager : MonoBehaviour
         }
     }
 
-    public void ResetIdleTimer() => idleTimer = 0f;
+    public void ResetIdleTimer()
+{
+    idleTimer = 0f;
+    cachedHint = null;
+}
 
     private void ShowHint()
-    {
-        var match = GetComponent<MatchManager>().GetBestValidSwapWithMatches();
+{
+    if (cachedHint == null)
+        cachedHint = GetComponent<MatchManager>().GetBestValidSwapWithMatches();
 
-        if (match.HasValue)
+    if (cachedHint.HasValue)
+    {
+        foreach (GameObject balloon in cachedHint.Value.matchedItems)
         {
-            List<GameObject> matchedItems = match.Value.matchedItems;
-            foreach (GameObject balloon in matchedItems)
-            {
-                if (balloon == null) continue;
-                var sr = balloon.GetComponent<SpriteRenderer>();
-                if (sr != null)
-                    StartCoroutine(HintBlink(sr));
-            }
+            if (balloon == null) continue;
+            var sr = balloon.GetComponent<SpriteRenderer>();
+            if (sr != null)
+                StartCoroutine(HintBlink(sr));
         }
     }
-
+}
 
     private IEnumerator HintBlink(SpriteRenderer sr)
     {
