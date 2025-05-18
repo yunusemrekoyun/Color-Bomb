@@ -349,6 +349,7 @@ public class BoardManager : MonoBehaviour
     {
         var first = allBalloons[startX, startY];
         if (first == null) return false;
+        
         string tag = first.tag;
         for (int i = 1; i < len; i++)
             if (allBalloons[startX + dx * i, startY + dy * i]?.tag != tag)

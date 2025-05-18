@@ -11,12 +11,18 @@ public class SpecialItemSpawner : MonoBehaviour
     public void SpawnSpecial(GameObject prefab, int x, int y)
     {
         if (prefab == null) return;
-        Vector3 worldPos = new Vector3(x * board.spacing + board.offsetX,
-                                       y * board.spacing + board.offsetY, 0);
+
+        // Hücrenin dünya pozisyonunu al
+        Vector3 worldPos = board.CellToWorld(x, y);
+
+        // Instantiate
         var special = Instantiate(prefab, worldPos, Quaternion.identity, transform);
         board.allBalloons[x, y] = special;
-        var balloon = special.GetComponent<BalloonItem>() ?? special.AddComponent<BalloonItem>();
-        balloon.x = x; balloon.y = y;
-        balloon.MoveTo(worldPos);
+
+        // BalloonItem component’i ekle/güncelle
+        var bi = special.GetComponent<BalloonItem>() ?? special.AddComponent<BalloonItem>();
+        bi.x = x;
+        bi.y = y;
+        bi.MoveTo(worldPos);
     }
 }

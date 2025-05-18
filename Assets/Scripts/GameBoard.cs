@@ -38,4 +38,16 @@ public class GameBoard : MonoBehaviour
         offsetX = -(width - 1) * spacing / 2f;
         offsetY = -(height - 1) * spacing / 2f;
     }
+
+    /// <summary>
+    /// Grid hücresi (x,y)’u dünya-koordinata çevirir.
+    /// </summary>
+    public Vector3 CellToWorld(int x, int y)
+    {
+        return new Vector3(
+            offsetX + x * spacing,
+            offsetY + y * spacing,
+            0f
+        );
+    }
 }
