@@ -234,13 +234,13 @@ MonoBehaviour:
   - {fileID: 4682285765965569786, guid: 33d77cca8977541a2966b473ff7ac578, type: 3}
   - {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
   - {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
-  - {fileID: 1254757422344675222, guid: f5b19e7330e884413a77367166bb366e, type: 3}
+  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
   blockedPositions: []
   horizontal5SpecialPrefab: {fileID: 7030282372386337094, guid: 010c625febb324f06a53f3843a92fc1d, type: 3}
   vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
   square4SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
-  horizontal4SpecialPrefab: {fileID: 7030282372386337094, guid: 19726eeb8bb304e63ba42a18396f7eac, type: 3}
-  vertical4SpecialPrefab: {fileID: 7030282372386337094, guid: b07ea99ead18d4e23b2e5869fe6d3a2b, type: 3}
+  horizontal4SpecialPrefab: {fileID: 7030282372386337094, guid: b07ea99ead18d4e23b2e5869fe6d3a2b, type: 3}
+  vertical4SpecialPrefab: {fileID: 7030282372386337094, guid: 19726eeb8bb304e63ba42a18396f7eac, type: 3}
   width: 6
   height: 8
   spacing: 3
