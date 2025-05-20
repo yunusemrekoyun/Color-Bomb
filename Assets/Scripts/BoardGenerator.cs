@@ -45,7 +45,16 @@ public class BoardGenerator : MonoBehaviour
                 var b = Instantiate(board.balloonPrefabs[r], spawnPos, Quaternion.identity, transform);
                 board.allBalloons[x, y] = b;
                 var bi = b.GetComponent<BalloonItem>();
-                if (bi != null) { bi.x = x; bi.y = y; }
+                if (bi != null)
+                {
+                    bi.x = x;
+                    bi.y = y;
+
+                    //  Eðer glass bölgesindeyse kilitle
+                    if (board.glassTiles.Exists(p => p.x == x && p.y == y))
+                        bi.isLockedInGlass = true;
+                }
+
             }
         }
     }

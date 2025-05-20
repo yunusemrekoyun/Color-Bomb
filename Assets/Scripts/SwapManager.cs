@@ -42,36 +42,40 @@ public class SwapManager : MonoBehaviour
         StartCoroutine(HandlePostSwap(b1, b2, x1, y1, x2, y2));
     }
 
-private IEnumerator HandlePostSwap(GameObject b1, GameObject b2, int x1, int y1, int x2, int y2)
-{
-    yield return new WaitForSeconds(0.25f); // Animasyon süresiyle uyuşmalı
-
-    SpecialItem s1 = b1.GetComponent<SpecialItem>();
-    SpecialItem s2 = b2.GetComponent<SpecialItem>();
-
-    bool specialTriggered = false;
-
-    if (s1 != null)
+    private IEnumerator HandlePostSwap(GameObject b1, GameObject b2, int x1, int y1, int x2, int y2)
     {
-        TriggerSpecial(s1, x2, y2); // b1 yeni konumunda
-        Destroy(b1);
-        board.allBalloons[x2, y2] = null;
-        specialTriggered = true;
-    }
-    if (s2 != null)
-    {
-        TriggerSpecial(s2, x1, y1); // b2 yeni konumunda
-        Destroy(b2);
-        board.allBalloons[x1, y1] = null;
-        specialTriggered = true;
+        yield return new WaitForSeconds(0.25f); // Swap animasyonu süresi
+
+        SpecialItem s1 = b1.GetComponent<SpecialItem>();
+        SpecialItem s2 = b2.GetComponent<SpecialItem>();
+
+        bool specialTriggered = false;
+
+        if (s1 != null)
+        {
+            board.allBalloons[x2, y2] = null;
+            StartCoroutine(TriggerSpecial(s1, x2, y2, b2.tag)); // önce patlat
+            Destroy(b1); // sonra yok et
+            specialTriggered = true;
+        }
+
+        if (s2 != null)
+        {
+            board.allBalloons[x1, y1] = null;
+            StartCoroutine(TriggerSpecial(s2, x1, y1, b1.tag));
+            Destroy(b2); // sonra yok et
+            specialTriggered = true;
+        }
+
+        if (!specialTriggered)
+        {
+            StartCoroutine(CheckMatchAfterSwap(x1, y1, x2, y2));
+        }
     }
 
-    if (!specialTriggered)
-    {
-        StartCoroutine(CheckMatchAfterSwap(x1, y1, x2, y2));
-    }
-}
-    private void TriggerSpecial(SpecialItem item, int x, int y)
+
+
+    private IEnumerator TriggerSpecial(SpecialItem item, int x, int y, string targetTag = null)
     {
         List<GameObject> toDestroy = new List<GameObject>();
 
@@ -97,12 +101,52 @@ private IEnumerator HandlePostSwap(GameObject b1, GameObject b2, int x1, int y1,
                 }
             }
         }
+        else if (item.state == SpecialItem.SpecialState.Vertical5) // bomb gibi
+        {
+            int radius = 1;
+            for (int dx = -radius; dx <= radius; dx++)
+            {
+                for (int dy = -radius; dy <= radius; dy++)
+                {
+                    int tx = x + dx;
+                    int ty = y + dy;
+                    if (tx >= 0 && tx < board.width && ty >= 0 && ty < board.height)
+                    {
+                        var b = board.allBalloons[tx, ty];
+                        if (b != null && !toDestroy.Contains(b))
+                        {
+                            toDestroy.Add(b);
+                            board.allBalloons[tx, ty] = null;
+                        }
+                    }
+                }
+            }
+        }
+        else if (item.state == SpecialItem.SpecialState.Horizontal5 && targetTag != null) // renk yok edici
+        {
+            for (int i = 0; i < board.width; i++)
+            {
+                for (int j = 0; j < board.height; j++)
+                {
+                    var b = board.allBalloons[i, j];
+                    if (b != null && b.tag == targetTag)
+                    {
+                        toDestroy.Add(b);
+                        board.allBalloons[i, j] = null;
+                    }
+                }
+            }
+        }
 
         foreach (var obj in toDestroy)
             Destroy(obj);
 
+        yield return new WaitForSeconds(0.4f); // 🎯 Patlama efekti gibi kısa bir duraklama
+
         GetComponent<DropManager>().DropBalloons();
     }
+
+
 
     private IEnumerator CheckMatchAfterSwap(int x1, int y1, int x2, int y2)
     {

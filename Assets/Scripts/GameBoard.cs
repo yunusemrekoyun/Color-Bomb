@@ -1,17 +1,30 @@
-// GameBoard.cs
 using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public struct BlockedPosition { public int x, y; }
 
+[System.Serializable]
+public struct GlassPosition { public int x, y; }
+
+[System.Serializable]
+public struct BoxPosition { public int x, y; }
+
 public class GameBoard : MonoBehaviour
 {
+    [Header("Breakable Tile Prefabs")]
+    public GameObject glassPrefab;
+    public GameObject boxPrefab;
+
     [Header("Normal Balloon Prefabs")]
     public GameObject[] balloonPrefabs;
 
-    [Header("Blocked Positions")]
+    [Header("Empty Positions")]
     public List<BlockedPosition> blockedPositions = new List<BlockedPosition>();
+
+    [Header("Breakable Tile Positions")]
+    public List<GlassPosition> glassTiles = new List<GlassPosition>();
+    public List<BoxPosition> boxTiles = new List<BoxPosition>();
 
     [Header("Special Item Prefabs")]
     public GameObject horizontal5SpecialPrefab;
@@ -37,7 +50,47 @@ public class GameBoard : MonoBehaviour
         allBalloons = new GameObject[width, height];
         offsetX = -(width - 1) * spacing / 2f;
         offsetY = -(height - 1) * spacing / 2f;
+
+        foreach (var box in boxTiles)
+        {
+            blockedPositions.Add(new BlockedPosition { x = box.x, y = box.y });
+        }
+
     }
+
+    private void Start()
+    {
+        // Glass tile'ları yerleştir
+        foreach (var g in glassTiles)
+        {
+            Vector3 pos = CellToWorld(g.x, g.y);
+
+            // Arkaplan da yerleştir
+            if (itemBackgroundPrefab != null)
+            {
+                var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
+                bg.transform.position = new Vector3(pos.x, pos.y, 1f); // Z arkada kalsın
+            }
+
+            Instantiate(glassPrefab, pos, Quaternion.identity, transform);
+        }
+
+        // Box tile'ları yerleştir
+        foreach (var b in boxTiles)
+        {
+            Vector3 pos = CellToWorld(b.x, b.y);
+
+            // Arkaplan da yerleştir
+            if (itemBackgroundPrefab != null)
+            {
+                var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
+                bg.transform.position = new Vector3(pos.x, pos.y, 1f);
+            }
+
+            Instantiate(boxPrefab, pos, Quaternion.identity, transform);
+        }
+    }
+
 
     /// <summary>
     /// Grid hücresi (x,y)’u dünya-koordinata çevirir.

@@ -5,7 +5,7 @@ public class SpecialItem : MonoBehaviour
     public enum SpecialState
     {
         Horizontal5,
-        Vertical5,
+        Vertical5, // bomb
         Square4,
         Horizontal4,
         Vertical4

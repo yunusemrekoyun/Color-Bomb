@@ -6,6 +6,8 @@ public class BalloonItem : MonoBehaviour
     private SwapManager swapManager;
     private HintManager hintManager;
 
+    public bool isLockedInGlass = false;
+
     public int x;
     public int y;
 
