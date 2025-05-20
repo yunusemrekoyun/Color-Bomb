@@ -12,6 +12,8 @@ TagManager:
   - Pink
   - Purple
   - Orange
+  - Glass
+  - Box
   layers:
   - Default
   - TransparentFX
