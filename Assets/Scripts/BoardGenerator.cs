@@ -50,9 +50,9 @@ public class BoardGenerator : MonoBehaviour
                     bi.x = x;
                     bi.y = y;
 
-                    //  Eðer glass bölgesindeyse kilitle
+                    //  Eï¿½er glass bï¿½lgesindeyse kilitle
                     if (board.glassTiles.Exists(p => p.x == x && p.y == y))
-                        bi.isLockedInGlass = true;
+                        bi.isFrozen = true;
                 }
 
             }

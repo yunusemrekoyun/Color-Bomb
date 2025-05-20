@@ -96,12 +96,19 @@ public class MatchManager : MonoBehaviour
 
         var b1 = board.allBalloons[x1, y1];
         var b2 = board.allBalloons[x2, y2];
-
-        // SpecialItem Dahil
         if (b1 == null || b2 == null) return false;
+
+        // 👉 eğer takas edeceğimiz balonlardan herhangi biri frozen ise hamle geçersiz
+        var bi1 = b1.GetComponent<BalloonItem>();
+        var bi2 = b2.GetComponent<BalloonItem>();
+        if ((bi1 != null && bi1.isFrozen) || (bi2 != null && bi2.isFrozen))
+            return false;
+
+        // SpecialItem içeriyorsa zaten elimizde kontrol vardı:
         if (b1.GetComponent<SpecialItem>() != null || b2.GetComponent<SpecialItem>() != null)
             return false;
 
+        // … ardından önceki simülasyon kodu değişmeden devam eder …
         board.allBalloons[x1, y1] = b2;
         board.allBalloons[x2, y2] = b1;
 
@@ -166,25 +173,23 @@ public class MatchManager : MonoBehaviour
     public bool CheckAndClearMatches()
     {
         HashSet<GameObject> matchedSet = new HashSet<GameObject>();
-        List<(List<GameObject> items, int spawnX, int spawnY, GameObject specialPrefab)> allMatches =
-            new List<(List<GameObject>, int, int, GameObject)>();
+        var allMatches = new List<(List<GameObject> items, int spawnX, int spawnY, GameObject specialPrefab)>();
 
         void AddMatch(List<GameObject> match, int spawnX, int spawnY, GameObject specialPrefab)
         {
-            bool alreadyIncluded = false;
+            // ❄️ Eğer match içindeki herhangi bir balon frozen ise atla
+            if (match.Any(obj => obj.GetComponent<BalloonItem>()?.isFrozen == true))
+                return;
+
+            // Aynı objeyi tekrar eklememek için kontrol
             foreach (var obj in match)
-            {
                 if (matchedSet.Contains(obj))
-                {
-                    alreadyIncluded = true;
-                    break;
-                }
-            }
-            if (!alreadyIncluded)
-            {
-                foreach (var obj in match) matchedSet.Add(obj);
-                allMatches.Add((match, spawnX, spawnY, specialPrefab));
-            }
+                    return;
+
+            // Yeni match’i kaydet
+            foreach (var obj in match)
+                matchedSet.Add(obj);
+            allMatches.Add((match, spawnX, spawnY, specialPrefab));
         }
 
         // Yatay ve dikey 5'li
@@ -232,7 +237,7 @@ public class MatchManager : MonoBehaviour
             foreach (var match in allMatches)
             {
                 int scoreToAdd = 0;
-                GameObject prefab = match.specialPrefab;
+                var prefab = match.specialPrefab;
 
                 if (prefab == board.horizontal5SpecialPrefab || prefab == board.vertical5SpecialPrefab)
                     scoreToAdd = 30;
@@ -244,15 +249,13 @@ public class MatchManager : MonoBehaviour
                     scoreToAdd = 10;
 
                 ScoreManager.Instance.AddScore(scoreToAdd);
-                mergeManager.StartMerge(match.items, match.spawnX, match.spawnY, match.specialPrefab);
+                mergeManager.StartMerge(match.items, match.spawnX, match.spawnY, prefab);
             }
-
             return true;
         }
 
         return false;
-    } 
-
+    }
     private void TryMatchLine(int startX, int startY, int dx, int dy, int len,
                           GameObject specialPrefab,
                           System.Action<List<GameObject>, int, int, GameObject> onMatch)

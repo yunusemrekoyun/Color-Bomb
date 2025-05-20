@@ -19,9 +19,23 @@ public class DropManager : MonoBehaviour
         for (int x = 0; x < board.width; x++)
         {
             int emptyY = -1;
+
             for (int y = 0; y < board.height; y++)
             {
-                if (board.blockedPositions.Exists(p => p.x == x && p.y == y)) continue;
+                if (board.blockedPositions.Exists(p => p.x == x && p.y == y))
+                    continue;
+
+                var current = board.allBalloons[x, y];
+                var balloon = current != null ? current.GetComponent<BalloonItem>() : null;
+
+                // 🧱 Eğer cam varsa ve hâlâ sahnedeyse, bu item yerinde sabit kalmalı
+                if (board.glassHealthDict.ContainsKey(new Vector2Int(x, y)))
+                    continue;
+
+                // ❄️ Eğer bu balon cam içindeyse ve isFrozen true ise, hareket ettirme
+                if (balloon != null && balloon.isFrozen)
+                    continue;
+
                 if (board.allBalloons[x, y] == null)
                 {
                     if (emptyY < 0) emptyY = y;
@@ -31,29 +45,45 @@ public class DropManager : MonoBehaviour
                     var obj = board.allBalloons[x, y];
                     board.allBalloons[x, emptyY] = obj;
                     board.allBalloons[x, y] = null;
+
                     var bi = obj.GetComponent<BalloonItem>();
                     Vector3 dest = new Vector3(x * board.spacing + board.offsetX,
                                                emptyY * board.spacing + board.offsetY, 0);
+
                     if (bi != null)
                     {
                         bi.x = x; bi.y = emptyY;
                         bi.MoveTo(dest);
                     }
-                    else obj.transform.position = dest;
+                    else
+                    {
+                        obj.transform.position = dest;
+                    }
+
                     emptyY++;
                     while (emptyY < board.height && board.blockedPositions.Exists(p => p.x == x && p.y == emptyY))
                         emptyY++;
                 }
             }
+
+            // 🧼 Spawn kısmı — cam varsa veya camın içindeki balon isFrozen ise, spawn etme
             for (int y = board.height - 1; y >= 0; y--)
             {
-                if (board.allBalloons[x, y] == null && !board.blockedPositions.Exists(p => p.x == x && p.y == y))
+                var pos = new Vector2Int(x, y);
+                var existing = board.allBalloons[x, y];
+                bool isFrozenHere = existing != null && existing.GetComponent<BalloonItem>()?.isFrozen == true;
+
+                if (existing == null &&
+                    !board.blockedPositions.Exists(p => p.x == x && p.y == y) &&
+                    !board.glassHealthDict.ContainsKey(pos) &&
+                    !isFrozenHere)
                 {
                     Vector3 spawnPos = new Vector3(x * board.spacing + board.offsetX,
                                                    (y + board.height) * board.spacing + board.offsetY, 0);
                     int r = Random.Range(0, board.balloonPrefabs.Length);
                     var nb = Instantiate(board.balloonPrefabs[r], spawnPos, Quaternion.identity, transform);
                     board.allBalloons[x, y] = nb;
+
                     var newBi = nb.GetComponent<BalloonItem>();
                     newBi.x = x; newBi.y = y;
                     newBi.MoveTo(new Vector3(x * board.spacing + board.offsetX,
@@ -61,6 +91,7 @@ public class DropManager : MonoBehaviour
                 }
             }
         }
+
         StartCoroutine(ClearAfterFall());
     }
 

@@ -45,6 +45,9 @@ public class GameBoard : MonoBehaviour
     [HideInInspector] public GameObject[,] allBalloons;
     [HideInInspector] public float offsetX, offsetY;
 
+    // ➕ Glass canı için dictionary
+    public Dictionary<Vector2Int, int> glassHealthDict = new Dictionary<Vector2Int, int>();
+
     private void Awake()
     {
         allBalloons = new GameObject[width, height];
@@ -55,7 +58,6 @@ public class GameBoard : MonoBehaviour
         {
             blockedPositions.Add(new BlockedPosition { x = box.x, y = box.y });
         }
-
     }
 
     private void Start()
@@ -64,15 +66,42 @@ public class GameBoard : MonoBehaviour
         foreach (var g in glassTiles)
         {
             Vector3 pos = CellToWorld(g.x, g.y);
+            Vector2Int gridPos = new Vector2Int(g.x, g.y);
 
-            // Arkaplan da yerleştir
+            // Arka plan
             if (itemBackgroundPrefab != null)
             {
                 var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
-                bg.transform.position = new Vector3(pos.x, pos.y, 1f); // Z arkada kalsın
+                bg.transform.position = new Vector3(pos.x, pos.y, 1f); // Z arkada
             }
 
-            Instantiate(glassPrefab, pos, Quaternion.identity, transform);
+            // Glass yerleştir
+            var glass = Instantiate(glassPrefab, pos, Quaternion.identity, transform);
+            glass.name = $"Glass_{g.x}_{g.y}";
+
+            // Canı 2 olarak ata
+            glassHealthDict[gridPos] = 2;
+
+            // Sadece bu pozisyon boşsa içine balon koy
+            if (allBalloons[g.x, g.y] == null)
+            {
+                int randIndex = Random.Range(0, balloonPrefabs.Length);
+                var balloon = Instantiate(balloonPrefabs[randIndex], pos, Quaternion.identity, transform);
+                var balloonScript = balloon.GetComponent<BalloonItem>();
+                if (balloonScript != null)
+                {
+                    balloonScript.x = g.x;
+                    balloonScript.y = g.y;
+                    balloonScript.isFrozen = true;
+
+                    Debug.Log($"✅ isFrozen şimdi ayarlandı! ({g.x}, {g.y}) → {balloonScript.isFrozen}");
+                }
+                allBalloons[g.x, g.y] = balloon;
+            }
+            else
+            {
+                Debug.LogWarning($"⚠️ Dikkat: ({g.x},{g.y}) pozisyonunda zaten balon var, ikinci kez spawn edilmedi.");
+            }
         }
 
         // Box tile'ları yerleştir
@@ -80,7 +109,6 @@ public class GameBoard : MonoBehaviour
         {
             Vector3 pos = CellToWorld(b.x, b.y);
 
-            // Arkaplan da yerleştir
             if (itemBackgroundPrefab != null)
             {
                 var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
@@ -90,7 +118,6 @@ public class GameBoard : MonoBehaviour
             Instantiate(boxPrefab, pos, Quaternion.identity, transform);
         }
     }
-
 
     /// <summary>
     /// Grid hücresi (x,y)’u dünya-koordinata çevirir.

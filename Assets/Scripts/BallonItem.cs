@@ -6,14 +6,14 @@ public class BalloonItem : MonoBehaviour
     private SwapManager swapManager;
     private HintManager hintManager;
 
-    public bool isLockedInGlass = false;
-
+   
+    public bool isFrozen = false;
     public int x;
     public int y;
 
     private void Start()
     {
-        Debug.Log($"[BalloonItem] Script çalıştı → {gameObject.name}");
+        Debug.Log($"[BalloonItem] Script çalıştı → {gameObject.name} | isFrozen = {isFrozen}");
 
         swapManager = FindFirstObjectByType<SwapManager>();
         hintManager = FindFirstObjectByType<HintManager>();
@@ -35,7 +35,11 @@ public class BalloonItem : MonoBehaviour
 
     private void OnMouseUp()
     {
-        Debug.Log($"[BalloonItem] OnMouseUp: {gameObject.name}");
+        if (isFrozen)
+        {
+            Debug.Log($"🚫 Bu balon donmuş ve hareket ettirilemez: ({x},{y})");
+            return;
+        }
 
         touchEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         touchEnd.z = 0f;
