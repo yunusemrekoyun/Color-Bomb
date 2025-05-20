@@ -29,7 +29,7 @@ public class DropManager : MonoBehaviour
                 var balloon = current != null ? current.GetComponent<BalloonItem>() : null;
 
                 // 🧱 Eğer cam varsa ve hâlâ sahnedeyse, bu item yerinde sabit kalmalı
-                if (board.glassHealthDict.ContainsKey(new Vector2Int(x, y)))
+                if (board.breakableManager.glassHealthDict.ContainsKey(new Vector2Int(x, y)))
                     continue;
 
                 // ❄️ Eğer bu balon cam içindeyse ve isFrozen true ise, hareket ettirme
@@ -75,7 +75,7 @@ public class DropManager : MonoBehaviour
 
                 if (existing == null &&
                     !board.blockedPositions.Exists(p => p.x == x && p.y == y) &&
-                    !board.glassHealthDict.ContainsKey(pos) &&
+                    !board.breakableManager.glassHealthDict.ContainsKey(pos) &&
                     !isFrozenHere)
                 {
                     Vector3 spawnPos = new Vector3(x * board.spacing + board.offsetX,

@@ -62,35 +62,8 @@ public class MergeManager : MonoBehaviour
 
                 if (nx < 0 || nx >= board.width || ny < 0 || ny >= board.height) continue;
 
-                if (board.glassHealthDict.ContainsKey(nPos))
-                {
-                    int currentHealth = board.glassHealthDict[nPos];
-                    Debug.Log($"🧊 Cam bulundu → ({nPos.x},{nPos.y}) | Mevcut Can: {currentHealth}");
+                board.breakableManager.TryDamageBlock(nPos);
 
-                    board.glassHealthDict[nPos] = currentHealth - 1;
-
-                    Debug.Log($"🧊 Cam hasar aldı → Yeni Can: {board.glassHealthDict[nPos]}");
-
-                    if (board.glassHealthDict[nPos] <= 0)
-                    {
-                        Debug.Log($"💥 Cam KIRILDI! → ({nPos.x},{nPos.y})");
-
-                        var glass = GameObject.Find($"Glass_{nPos.x}_{nPos.y}");
-                        if (glass != null) Destroy(glass);
-                        board.glassHealthDict.Remove(nPos);
-
-                        var innerBalloon = board.allBalloons[nPos.x, nPos.y];
-                        if (innerBalloon != null)
-                        {
-                            var frozenBalloon = innerBalloon.GetComponent<BalloonItem>();
-                            if (frozenBalloon != null)
-                            {
-                                frozenBalloon.isFrozen = false;
-                                Debug.Log($"🎈 İçerideki balon artık serbest → ({nPos.x},{nPos.y})");
-                            }
-                        }
-                    }
-                }
             }
         }
 

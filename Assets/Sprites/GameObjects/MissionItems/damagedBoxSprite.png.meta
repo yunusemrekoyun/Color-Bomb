@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 11f429ca0ad674d11a8a2f2008ff0466
+guid: ef82b920ee1182c4d8ef6376310d2a7f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1824735618452866305
-    second: BoxTile_0
+      213: 2841910287779562691
+    second: damagedBoxSprite_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,40 +96,27 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: iOS
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BoxTile_0
+      name: damagedBoxSprite_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 3
         y: 0
-        width: 200
-        height: 201
-      alignment: 9
-      pivot: {x: 0.05, y: 0}
+        width: 1019
+        height: 1019
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ffa3d157f9c3da6e0800000000000000
-      internalID: -1824735618452866305
+      spriteID: 3c401a2895e707720800000000000000
+      internalID: 2841910287779562691
       vertices: []
       indices: 
       edges: []
@@ -138,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 39a665bb4dfd74d8282dfd122e0dae7e
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -147,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      BoxTile_0: -1824735618452866305
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -93,16 +93,16 @@ public class SwapManager : MonoBehaviour
             if (bi != null && bi.isFrozen)
             {
                 var gridPos = new Vector2Int(i, j);
-                if (board.glassHealthDict.TryGetValue(gridPos, out int health))
+                if (board.breakableManager.glassHealthDict.TryGetValue(gridPos, out int health))
                 {
                     health -= 1;
-                    board.glassHealthDict[gridPos] = health;
+                    board.breakableManager.glassHealthDict[gridPos] = health;
                     Debug.Log($"🔨 Cam kırılıyor at {gridPos}, kalan can: {health}");
 
                     if (health <= 0)
                     {
                         // 1) Sözlükten çıkar
-                        board.glassHealthDict.Remove(gridPos);
+                        board.breakableManager.glassHealthDict.Remove(gridPos);
 
                         // 2) Sahnedeki Glass objesini bulup yok et
                         var glassObj = GameObject.Find($"Glass_{i}_{j}");

@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 66861610}
   - component: {fileID: 66861616}
+  - component: {fileID: 66861619}
   - component: {fileID: 66861615}
   - component: {fileID: 66861614}
   - component: {fileID: 66861613}
@@ -249,7 +250,9 @@ MonoBehaviour:
     y: 7
   - x: 1
     y: 7
-  boxTiles: []
+  boxTiles:
+  - x: 0
+    y: 5
   horizontal5SpecialPrefab: {fileID: 7030282372386337094, guid: 010c625febb324f06a53f3843a92fc1d, type: 3}
   vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
   square4SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
@@ -262,6 +265,7 @@ MonoBehaviour:
   hintDelay: 5
   offsetX: 0
   offsetY: 0
+  breakableManager: {fileID: 0}
 --- !u!114 &66861617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,6 +290,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0408a37b1972c954187cca412ec33d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &66861619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66861608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e7460b9c4fc7cf478711657c2120bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagedGlassSprite: {fileID: 7330345924001724004, guid: 54e2594f70d4f6e4d8498b7d4c311960, type: 3}
+  damagedBoxSprite: {fileID: 2841910287779562691, guid: ef82b920ee1182c4d8ef6376310d2a7f, type: 3}
 --- !u!1 &352105622
 GameObject:
   m_ObjectHideFlags: 0
