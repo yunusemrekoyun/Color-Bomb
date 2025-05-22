@@ -130,9 +130,20 @@ public class SwapManager : MonoBehaviour
             for (int i = 0; i < board.width; i++)
             {
                 if (TryHandleGlassAt(i, y)) continue;
+if (TriggerAnotherSpecialIfExists(i, y)) continue;
                 var b = board.allBalloons[i, y];
                 if (b != null)
                 {
+                    // Zincirleme kontrolü
+                    var special = b.GetComponent<SpecialItem>();
+                    if (special != null && special != item) // kendini tekrar tetikleme
+                    {
+                        board.allBalloons[i, y] = null;
+                        StartCoroutine(TriggerSpecial(special, i, y));
+                        Destroy(b);
+                        continue;
+                    }
+
                     toDestroy.Add(b);
                     board.allBalloons[i, y] = null;
                 }
@@ -144,9 +155,19 @@ public class SwapManager : MonoBehaviour
             for (int j = 0; j < board.height; j++)
             {
                 if (TryHandleGlassAt(x, j)) continue;
+if (TriggerAnotherSpecialIfExists(x, j)) continue;
                 var b = board.allBalloons[x, j];
                 if (b != null)
                 {
+                    var special = b.GetComponent<SpecialItem>();
+                    if (special != null && special != item)
+                    {
+                        board.allBalloons[x, j] = null;
+                        StartCoroutine(TriggerSpecial(special, x, j));
+                        Destroy(b);
+                        continue;
+                    }
+
                     toDestroy.Add(b);
                     board.allBalloons[x, j] = null;
                 }
@@ -164,6 +185,7 @@ public class SwapManager : MonoBehaviour
                     if (tx < 0 || tx >= board.width || ty < 0 || ty >= board.height)
                         continue;
                     if (TryHandleGlassAt(tx, ty)) continue;
+                    if (TriggerAnotherSpecialIfExists(tx, ty)) continue;
                     var b = board.allBalloons[tx, ty];
                     if (b != null)
                     {
@@ -181,6 +203,7 @@ public class SwapManager : MonoBehaviour
                 for (int j = 0; j < board.height; j++)
                 {
                     if (TryHandleGlassAt(i, j)) continue;
+                    if (TriggerAnotherSpecialIfExists(i, j)) continue;
                     var b = board.allBalloons[i, j];
                     if (b != null && b.tag == targetTag)
                     {
@@ -202,7 +225,22 @@ public class SwapManager : MonoBehaviour
     }
 
 
+private bool TriggerAnotherSpecialIfExists(int x, int y)
+{
+    var b = board.allBalloons[x, y];
+    if (b == null) return false;
 
+    var special = b.GetComponent<SpecialItem>();
+    if (special != null)
+    {
+        board.allBalloons[x, y] = null;
+        StartCoroutine(TriggerSpecial(special, x, y));
+        Destroy(b);
+        return true;
+    }
+
+    return false;
+}
     private IEnumerator CheckMatchAfterSwap(int x1, int y1, int x2, int y2)
     {
         yield return new WaitForSeconds(0.3f);

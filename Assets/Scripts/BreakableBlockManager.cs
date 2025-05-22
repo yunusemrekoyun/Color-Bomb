@@ -30,7 +30,7 @@ public class BreakableBlockManager : MonoBehaviour
         if (glassHealthDict.ContainsKey(pos))
         {
             glassHealthDict[pos]--;
-            glassHealthDict[pos]--;
+            
             int newHealth = glassHealthDict[pos];
 
             if (newHealth == 1)

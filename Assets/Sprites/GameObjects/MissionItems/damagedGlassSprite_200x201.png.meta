@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 54e2594f70d4f6e4d8498b7d4c311960
+guid: f9341fd8f41654dc1b5575695ed2a6d1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7330345924001724004
-    second: damagedGlassSprite_0
+      213: -3438655936804076178
+    second: damagedGlassSprite_200x201_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,14 +100,14 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: damagedGlassSprite_0
+      name: damagedGlassSprite_200x201_0
       rect:
         serializedVersion: 2
-        x: 72
-        y: 63
-        width: 881
-        height: 898
-      alignment: 0
+        x: 11
+        y: 9
+        width: 178
+        height: 182
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 466fad0b7ce9ab560800000000000000
-      internalID: 7330345924001724004
+      spriteID: e65410ee4a07740d0800000000000000
+      internalID: -3438655936804076178
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 81ef53c0898ca411eacff0e0c91a78a3
     internalID: 0
     vertices: []
     indices: 
@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      damagedGlassSprite_200x201_0: -3438655936804076178
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

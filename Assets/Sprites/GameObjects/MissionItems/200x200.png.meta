@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ef82b920ee1182c4d8ef6376310d2a7f
+guid: 18471c8507b9e4dc8968c5ed191e41fd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2841910287779562691
-    second: damagedBoxSprite_0
+      213: -8733941156250407944
+    second: 200x200_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: damagedBoxSprite_0
+      name: 200x200_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 0
-        width: 1019
-        height: 1019
+        x: 85
+        y: 71
+        width: 851
+        height: 894
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3c401a2895e707720800000000000000
-      internalID: 2841910287779562691
+      spriteID: 8fba784facecac680800000000000000
+      internalID: -8733941156250407944
       vertices: []
       indices: 
       edges: []
