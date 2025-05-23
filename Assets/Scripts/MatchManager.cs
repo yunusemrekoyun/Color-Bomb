@@ -181,10 +181,21 @@ public class MatchManager : MonoBehaviour
             if (match.Any(obj => obj.GetComponent<BalloonItem>()?.isFrozen == true))
                 return;
 
+            // Eğer match’te special item varsa → bu eşleşmeyi iptal et (yok edilmesin)
+            if (match.Any(obj => obj.GetComponent<SpecialItem>() != null))
+                return;
+
             // Aynı objeyi tekrar eklememek için kontrol
             foreach (var obj in match)
                 if (matchedSet.Contains(obj))
                     return;
+
+            // ❌ Aynı pozisyonda daha önce special yerleştirilecekse, atla
+            foreach (var existing in allMatches)
+            {
+                if (existing.spawnX == spawnX && existing.spawnY == spawnY)
+                    return;
+            }
 
             // Yeni match’i kaydet
             foreach (var obj in match)

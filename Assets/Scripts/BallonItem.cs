@@ -88,6 +88,6 @@ public class BalloonItem : MonoBehaviour
             transform.position = Vector3.Lerp(start, target, t);
             yield return null;
         }
-        transform.position = target;
+       transform.position = new Vector3(target.x, target.y, 0f);
     }
 }

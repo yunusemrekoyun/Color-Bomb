@@ -237,7 +237,6 @@ MonoBehaviour:
   - {fileID: 4682285765965569786, guid: 33d77cca8977541a2966b473ff7ac578, type: 3}
   - {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
   - {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
-  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
   blockedPositions: []
   glassTiles:
   - x: 0
@@ -302,7 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e7460b9c4fc7cf478711657c2120bc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagedGlassSprite: {fileID: 7330345924001724004, guid: 54e2594f70d4f6e4d8498b7d4c311960, type: 3}
+  damagedGlassSprite: {fileID: 6077723514214133562, guid: f5ca36fb907544981b01a96fbc66dd6c, type: 3}
   damagedBoxSprite: {fileID: 6559575639038860511, guid: adc77c1c497974ecd981b3ae8944e782, type: 3}
 --- !u!1 &352105622
 GameObject:

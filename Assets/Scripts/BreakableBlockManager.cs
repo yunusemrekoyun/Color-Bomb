@@ -30,16 +30,27 @@ public class BreakableBlockManager : MonoBehaviour
         if (glassHealthDict.ContainsKey(pos))
         {
             glassHealthDict[pos]--;
-            
+
             int newHealth = glassHealthDict[pos];
 
             if (newHealth == 1)
                 UpdateGlassSprite(pos);
 
             if (newHealth <= 0)
+            {
+                var glassObj = GameObject.Find($"Glass_{pos.x}_{pos.y}");
+                if (glassObj != null)
+                {
+                    var sr = glassObj.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                        sr.sprite = null; // 🧹 Sprite'ı kaldır
 
-                Destroy(GameObject.Find($"Glass_{pos.x}_{pos.y}"));
-            ReleaseBalloon(pos);
+                    Destroy(glassObj); // 🗑️ Obje yok et
+                }
+
+                glassHealthDict.Remove(pos);
+                ReleaseBalloon(pos);
+            }
 
 
             return true;
@@ -55,9 +66,12 @@ public class BreakableBlockManager : MonoBehaviour
                 UpdateBoxSprite(pos);
 
             if (newHealth <= 0)
-
+            {
                 Destroy(GameObject.Find($"Box_{pos.x}_{pos.y}"));
-            ReleaseBalloon(pos);
+                boxHealthDict.Remove(pos);
+                board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y); // ✅ Temizle
+                ReleaseBalloon(pos);
+            }
 
 
             return true;

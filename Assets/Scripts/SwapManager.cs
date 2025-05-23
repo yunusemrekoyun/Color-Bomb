@@ -130,7 +130,7 @@ public class SwapManager : MonoBehaviour
             for (int i = 0; i < board.width; i++)
             {
                 if (TryHandleGlassAt(i, y)) continue;
-if (TriggerAnotherSpecialIfExists(i, y)) continue;
+                if (TriggerAnotherSpecialIfExists(i, y)) continue;
                 var b = board.allBalloons[i, y];
                 if (b != null)
                 {
@@ -155,7 +155,7 @@ if (TriggerAnotherSpecialIfExists(i, y)) continue;
             for (int j = 0; j < board.height; j++)
             {
                 if (TryHandleGlassAt(x, j)) continue;
-if (TriggerAnotherSpecialIfExists(x, j)) continue;
+                if (TriggerAnotherSpecialIfExists(x, j)) continue;
                 var b = board.allBalloons[x, j];
                 if (b != null)
                 {
@@ -171,6 +171,31 @@ if (TriggerAnotherSpecialIfExists(x, j)) continue;
                     toDestroy.Add(b);
                     board.allBalloons[x, j] = null;
                 }
+            }
+        }
+        // Block Blaster (Square4) special
+        else if (item.state == SpecialItem.SpecialState.Square4)
+        {
+            List<Vector2Int> allBlockPositions = new List<Vector2Int>();
+
+            // Cam blokları topla
+            foreach (var entry in board.breakableManager.glassHealthDict)
+                if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+
+            // Box blokları topla
+            foreach (var entry in board.breakableManager.boxHealthDict)
+                if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+
+            // 3 kez hasar gönder
+            for (int i = 0; i < 3; i++)
+            {
+                if (allBlockPositions.Count == 0) break;
+
+                int index = Random.Range(0, allBlockPositions.Count);
+                Vector2Int target = allBlockPositions[index];
+
+                board.breakableManager.TryDamageBlock(target); // ✅ Merkezden yönettiğin fonksiyon
+                allBlockPositions.RemoveAt(index); // Aynı yere tekrar vurma
             }
         }
         // Bomb (Vertical5) special
@@ -203,10 +228,14 @@ if (TriggerAnotherSpecialIfExists(x, j)) continue;
                 for (int j = 0; j < board.height; j++)
                 {
                     if (TryHandleGlassAt(i, j)) continue;
-                    if (TriggerAnotherSpecialIfExists(i, j)) continue;
+
                     var b = board.allBalloons[i, j];
                     if (b != null && b.tag == targetTag)
                     {
+                        var bi = b.GetComponent<BalloonItem>();
+                        if (bi != null && bi.isFrozen)
+                            continue; // ❄️ Frozen balon → yok etme
+
                         toDestroy.Add(b);
                         board.allBalloons[i, j] = null;
                     }
@@ -225,22 +254,22 @@ if (TriggerAnotherSpecialIfExists(x, j)) continue;
     }
 
 
-private bool TriggerAnotherSpecialIfExists(int x, int y)
-{
-    var b = board.allBalloons[x, y];
-    if (b == null) return false;
-
-    var special = b.GetComponent<SpecialItem>();
-    if (special != null)
+    private bool TriggerAnotherSpecialIfExists(int x, int y)
     {
-        board.allBalloons[x, y] = null;
-        StartCoroutine(TriggerSpecial(special, x, y));
-        Destroy(b);
-        return true;
-    }
+        var b = board.allBalloons[x, y];
+        if (b == null) return false;
 
-    return false;
-}
+        var special = b.GetComponent<SpecialItem>();
+        if (special != null)
+        {
+            board.allBalloons[x, y] = null;
+            StartCoroutine(TriggerSpecial(special, x, y));
+            Destroy(b);
+            return true;
+        }
+
+        return false;
+    }
     private IEnumerator CheckMatchAfterSwap(int x1, int y1, int x2, int y2)
     {
         yield return new WaitForSeconds(0.3f);

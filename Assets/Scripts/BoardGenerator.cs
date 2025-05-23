@@ -35,7 +35,9 @@ public class BoardGenerator : MonoBehaviour
 
                 Vector2 spawnPos = new Vector2(x * board.spacing + board.offsetX,
                                                 y * board.spacing + board.offsetY);
-                if (board.itemBackgroundPrefab != null)
+                if (board.itemBackgroundPrefab != null &&
+    !board.glassTiles.Exists(p => p.x == x && p.y == y) &&
+    !board.boxTiles.Exists(p => p.x == x && p.y == y))
                 {
                     var bg = Instantiate(board.itemBackgroundPrefab, spawnPos, Quaternion.identity, transform);
                     bg.transform.position = new Vector3(spawnPos.x, spawnPos.y, 1f);

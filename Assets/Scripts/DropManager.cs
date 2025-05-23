@@ -92,7 +92,7 @@ public class DropManager : MonoBehaviour
             }
         }
 
-        StartCoroutine(ClearAfterFall());
+        StartCoroutine(ClearAfterFallWithDelay());
     }
 
     private IEnumerator ClearAfterFall()
@@ -102,5 +102,36 @@ public class DropManager : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         else
             GetComponent<BoardGenerator>().StartCheckBoardHasMoves();
+    }
+    private IEnumerator ClearAfterFallWithDelay()
+    {
+        yield return new WaitForSeconds(0.6f); // 🕓 Animasyonların inmesini bekle
+
+        while (AreBalloonsMoving())
+            yield return null;
+
+        if (GetComponent<MatchManager>().CheckAndClearMatches())
+            yield return new WaitForSeconds(0.2f);
+        else
+            GetComponent<BoardGenerator>().StartCheckBoardHasMoves();
+    }
+    private bool AreBalloonsMoving()
+    {
+        foreach (var b in board.allBalloons)
+        {
+            if (b == null) continue;
+            var rb = b.GetComponent<Rigidbody2D>();
+            if (rb != null && rb.linearVelocity.magnitude > 0.01f)
+                return true;
+
+            // Eğer Rigidbody yoksa ve MoveTo kullanıldıysa: Z değişimiyle pozisyonu kontrol et
+            var bi = b.GetComponent<BalloonItem>();
+            if (bi != null && bi.transform.hasChanged)
+            {
+                bi.transform.hasChanged = false;
+                return true;
+            }
+        }
+        return false;
     }
 }
