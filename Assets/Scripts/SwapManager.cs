@@ -152,6 +152,15 @@ public class SwapManager : MonoBehaviour
         // Vertical-4 special
         else if (item.state == SpecialItem.SpecialState.Vertical4)
         {
+            if (board.verticalLaserEffectPrefab != null)
+            {
+                Vector3 effectPos = board.CellToWorld(x, board.height / 2); // bu genelde X, Y pozisyonunu ortalar
+                var effect = Instantiate(board.verticalLaserEffectPrefab, effectPos, Quaternion.identity);
+                effect.transform.localScale = new Vector3(1f, board.height * board.spacing, 1f);
+
+                // 🎯 Efekti 1.2 saniye sonra yok et → animasyonun süresi kadar
+                Destroy(effect, 1.2f);
+            }
             for (int j = 0; j < board.height; j++)
             {
                 if (TryHandleGlassAt(x, j)) continue;
