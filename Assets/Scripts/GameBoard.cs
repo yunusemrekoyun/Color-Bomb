@@ -42,12 +42,12 @@ public class GameBoard : MonoBehaviour
     [Header("Hint Settings")]
     public float hintDelay = 5f;
 
+    [Header("References")]
+    public TaskManager taskManager;
+
     [HideInInspector] public GameObject[,] allBalloons;
     [HideInInspector] public float offsetX, offsetY;
-
-    [HideInInspector]
-    public BreakableBlockManager breakableManager;
-
+    [HideInInspector] public BreakableBlockManager breakableManager;
 
     private void Awake()
     {
@@ -59,88 +59,70 @@ public class GameBoard : MonoBehaviour
         if (breakableManager == null)
             Debug.LogError("BreakableBlockManager bulunamadı!");
 
-       
+        if (taskManager == null)
+            taskManager = GetComponent<TaskManager>();
     }
 
-   private void Start()
-{
-    // Glass tile'ları yerleştir
-    foreach (var g in glassTiles)
+    private void Start()
     {
-        Vector3 pos = CellToWorld(g.x, g.y);
-        Vector2Int gridPos = new Vector2Int(g.x, g.y);
-
-        // Arka plan
-        if (itemBackgroundPrefab != null)
+        foreach (var g in glassTiles)
         {
-            var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
-            bg.transform.position = new Vector3(pos.x, pos.y, 1f); // Z arkada
-        }
+            Vector3 pos = CellToWorld(g.x, g.y);
+            Vector2Int gridPos = new Vector2Int(g.x, g.y);
 
-        // Glass yerleştir
-        var glass = Instantiate(glassPrefab, pos, Quaternion.identity, transform);
-        glass.name = $"Glass_{g.x}_{g.y}";
-
-        // Canı 2 olarak ata
-        breakableManager.glassHealthDict[gridPos] = 2;
-
-        // Sadece bu pozisyon boşsa içine balon koy
-        if (allBalloons[g.x, g.y] == null)
-        {
-            int randIndex = Random.Range(0, balloonPrefabs.Length);
-            var balloon = Instantiate(balloonPrefabs[randIndex], pos, Quaternion.identity, transform);
-            var balloonScript = balloon.GetComponent<BalloonItem>();
-            if (balloonScript != null)
+            if (itemBackgroundPrefab != null)
             {
-                balloonScript.x = g.x;
-                balloonScript.y = g.y;
-                balloonScript.isFrozen = true;
-
-                Debug.Log($"✅ isFrozen (Glass) → ({g.x}, {g.y})");
+                var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
+                bg.transform.position = new Vector3(pos.x, pos.y, 1f);
             }
-            allBalloons[g.x, g.y] = balloon;
-        }
-        else
-        {
-            Debug.LogWarning($"⚠️ ({g.x},{g.y}) pozisyonunda zaten balon var, glass altında spawn edilmedi.");
-        }
-    }
 
-    // Box tile'ları yerleştir
-    foreach (var b in boxTiles)
-    {
-        Vector3 pos = CellToWorld(b.x, b.y);
-        Vector2Int gridPos = new Vector2Int(b.x, b.y);
+            var glass = Instantiate(glassPrefab, pos, Quaternion.identity, transform);
+            glass.name = $"Glass_{g.x}_{g.y}";
+            breakableManager.glassHealthDict[gridPos] = 2;
 
-        if (itemBackgroundPrefab != null)
-        {
-            var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
-            bg.transform.position = new Vector3(pos.x, pos.y, 1f);
-        }
-
-        var box = Instantiate(boxPrefab, pos, Quaternion.identity, transform);
-        box.name = $"Box_{b.x}_{b.y}";
-
-        // ✅ Can ver
-        breakableManager.boxHealthDict[gridPos] = 2;
-
-        // Eğer pozisyonda balon varsa onu kilitle
-        if (allBalloons[b.x, b.y] != null)
-        {
-            var balloon = allBalloons[b.x, b.y].GetComponent<BalloonItem>();
-            if (balloon != null)
+            if (allBalloons[g.x, g.y] == null)
             {
-                balloon.isFrozen = true;
-                Debug.Log($"📦 isFrozen (Box) → ({b.x}, {b.y})");
+                int randIndex = Random.Range(0, balloonPrefabs.Length);
+                var balloon = Instantiate(balloonPrefabs[randIndex], pos, Quaternion.identity, transform);
+                var balloonScript = balloon.GetComponent<BalloonItem>();
+                if (balloonScript != null)
+                {
+                    balloonScript.x = g.x;
+                    balloonScript.y = g.y;
+                    balloonScript.isFrozen = true;
+                    Debug.Log($"✅ isFrozen (Glass) → ({g.x}, {g.y})");
+                }
+                allBalloons[g.x, g.y] = balloon;
+            }
+        }
+
+        foreach (var b in boxTiles)
+        {
+            Vector3 pos = CellToWorld(b.x, b.y);
+            Vector2Int gridPos = new Vector2Int(b.x, b.y);
+
+            if (itemBackgroundPrefab != null)
+            {
+                var bg = Instantiate(itemBackgroundPrefab, pos, Quaternion.identity, transform);
+                bg.transform.position = new Vector3(pos.x, pos.y, 1f);
+            }
+
+            var box = Instantiate(boxPrefab, pos, Quaternion.identity, transform);
+            box.name = $"Box_{b.x}_{b.y}";
+            breakableManager.boxHealthDict[gridPos] = 2;
+
+            if (allBalloons[b.x, b.y] != null)
+            {
+                var balloon = allBalloons[b.x, b.y].GetComponent<BalloonItem>();
+                if (balloon != null)
+                {
+                    balloon.isFrozen = true;
+                    Debug.Log($"📦 isFrozen (Box) → ({b.x}, {b.y})");
+                }
             }
         }
     }
-}
 
-
-    /// <summary>
-    /// Grid hücresi (x,y)’u dünya-koordinata çevirir.
-    /// </summary>
     public Vector3 CellToWorld(int x, int y)
     {
         return new Vector3(
@@ -148,5 +130,14 @@ public class GameBoard : MonoBehaviour
             offsetY + y * spacing,
             0f
         );
+    }
+
+    public void DestroyMatchedItems(List<GameObject> matchedItems)
+    {
+        foreach (var item in matchedItems)
+        {
+            taskManager.OnItemDestroyed(item);
+            Destroy(item);
+        }
     }
 }

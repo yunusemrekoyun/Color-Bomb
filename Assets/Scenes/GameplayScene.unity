@@ -273,6 +273,7 @@ GameObject:
   - component: {fileID: 66861611}
   - component: {fileID: 66861618}
   - component: {fileID: 66861617}
+  - component: {fileID: 66861620}
   m_Layer: 0
   m_Name: BoardManager
   m_TagString: Untagged
@@ -373,6 +374,7 @@ MonoBehaviour:
   - {fileID: 4682285765965569786, guid: 33d77cca8977541a2966b473ff7ac578, type: 3}
   - {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
   - {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
+  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
   blockedPositions: []
   glassTiles:
   - x: 0
@@ -398,6 +400,7 @@ MonoBehaviour:
   spacing: 3
   itemBackgroundPrefab: {fileID: 388787130618852923, guid: 31efe7e584b234a7cb35d67e8dd67862, type: 3}
   hintDelay: 5
+  taskManager: {fileID: 66861620}
   offsetX: 0
   offsetY: 0
   breakableManager: {fileID: 0}
@@ -439,6 +442,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damagedGlassSprite: {fileID: 6077723514214133562, guid: f5ca36fb907544981b01a96fbc66dd6c, type: 3}
   damagedBoxSprite: {fileID: 6559575639038860511, guid: adc77c1c497974ecd981b3ae8944e782, type: 3}
+--- !u!114 &66861620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66861608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06a5019d02a234824a7ea32c563ce5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyTasks:
+  - prefab: {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
+    count: 3
+    remaining: 0
+  - prefab: {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
+    count: 5
+    remaining: 0
+  - prefab: {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
+    count: 7
+    remaining: 0
+  taskImages:
+  - {fileID: 696368059}
+  - {fileID: 1540943045}
+  - {fileID: 1862832219}
+  taskTexts:
+  - {fileID: 44067310}
+  - {fileID: 1093116680}
+  - {fileID: 715028477}
 --- !u!1 &125155978
 GameObject:
   m_ObjectHideFlags: 0

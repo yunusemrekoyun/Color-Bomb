@@ -10,11 +10,13 @@ public class MatchManager : MonoBehaviour
     private MatchState currentState = MatchState.None;
     private GameBoard board;
     private MergeManager mergeManager;
+    private TaskManager taskManager;
 
     private void Awake()
     {
         board = GetComponent<GameBoard>();
         mergeManager = GetComponent<MergeManager>();
+        taskManager = GetComponent<TaskManager>();
     }
 
     public (Vector2Int, Vector2Int)? GetFirstValidSwap()
@@ -181,7 +183,7 @@ public class MatchManager : MonoBehaviour
             if (match.Any(obj => obj.GetComponent<BalloonItem>()?.isFrozen == true))
                 return;
 
-            // Eğer match’te special item varsa → bu eşleşmeyi iptal et (yok edilmesin)
+            // Eğer match’te special item varsa → iptal et
             if (match.Any(obj => obj.GetComponent<SpecialItem>() != null))
                 return;
 
@@ -190,18 +192,17 @@ public class MatchManager : MonoBehaviour
                 if (matchedSet.Contains(obj))
                     return;
 
-            // ❌ Aynı pozisyonda daha önce special yerleştirilecekse, atla
+            // Aynı pozisyonda daha önce special yerleştirilecekse, atla
             foreach (var existing in allMatches)
-            {
                 if (existing.spawnX == spawnX && existing.spawnY == spawnY)
                     return;
-            }
 
             // Yeni match’i kaydet
             foreach (var obj in match)
                 matchedSet.Add(obj);
             allMatches.Add((match, spawnX, spawnY, specialPrefab));
         }
+
 
         // Yatay ve dikey 5'li
         for (int y = 0; y < board.height; y++)
@@ -247,9 +248,15 @@ public class MatchManager : MonoBehaviour
         {
             foreach (var match in allMatches)
             {
+                // ← Buraya ekledik: patlatılacak her balon için
+                foreach (var item in match.items)
+                {
+                    if (taskManager != null)
+                        taskManager.OnItemDestroyed(item);
+                }
+
                 int scoreToAdd = 0;
                 var prefab = match.specialPrefab;
-
                 if (prefab == board.horizontal5SpecialPrefab || prefab == board.vertical5SpecialPrefab)
                     scoreToAdd = 30;
                 else if (prefab == board.square4SpecialPrefab)
@@ -264,7 +271,6 @@ public class MatchManager : MonoBehaviour
             }
             return true;
         }
-
         return false;
     }
     private void TryMatchLine(int startX, int startY, int dx, int dy, int len,
