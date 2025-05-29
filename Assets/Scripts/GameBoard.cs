@@ -21,7 +21,8 @@ public class GameBoard : MonoBehaviour
 
     [Header("Normal Balloon Prefabs")]
     public GameObject[] balloonPrefabs;
-
+    [Header("▶ Skor Ayarları")]
+    public int scoreMultiplier = 10; // Örn: her eşleşme başına 10 puan
     [Header("Empty Positions")]
     public List<BlockedPosition> blockedPositions = new List<BlockedPosition>();
 

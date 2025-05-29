@@ -16,6 +16,7 @@ public class ScoreManager : MonoBehaviour
             Destroy(gameObject);
     }
 
+
     public void AddScore(int amount)
     {
         currentScore += amount;

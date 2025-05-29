@@ -264,6 +264,12 @@ public class SwapManager : MonoBehaviour
 
         // Klasik 3’lük/4’lük/5’lik match temizlemeleri bu metotta değil
         // Yalnızca special ile yok edilecekler
+        if (toDestroy.Count > 0)
+        {
+            int multiplier = board.scoreMultiplier > 0 ? board.scoreMultiplier : 1;
+            ScoreManager.Instance.AddScore(toDestroy.Count * multiplier);
+        }
+
         foreach (var obj in toDestroy)
             Destroy(obj);
 
