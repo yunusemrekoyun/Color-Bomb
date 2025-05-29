@@ -7,11 +7,12 @@ public class SwapManager : MonoBehaviour
 {
     private GameBoard board;
     private HintManager hintManager;
-
+    private MovesManager movesManager;
     private void Awake()
     {
         board = GetComponent<GameBoard>();
         hintManager = GetComponent<HintManager>();
+        movesManager = FindFirstObjectByType<MovesManager>();
     }
 
     public void SwapBalloons(int x1, int y1, int x2, int y2)
@@ -50,6 +51,10 @@ public class SwapManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.25f); // Swap animasyonu süresi
 
+        // ✅ Destroy() edilmiş objeye erişmeye çalışma
+        if (b1 == null || b2 == null || !b1 || !b2)
+            yield break;
+
         SpecialItem s1 = b1.GetComponent<SpecialItem>();
         SpecialItem s2 = b2.GetComponent<SpecialItem>();
 
@@ -58,17 +63,21 @@ public class SwapManager : MonoBehaviour
         if (s1 != null)
         {
             board.allBalloons[x2, y2] = null;
-            StartCoroutine(TriggerSpecial(s1, x2, y2, b2.tag)); // önce patlat
-            Destroy(b1); // sonra yok et
+            StartCoroutine(TriggerSpecial(s1, x2, y2, b2 != null ? b2.tag : null)); // tag çekilemezse null olur
+            Destroy(b1);
             specialTriggered = true;
+            if (movesManager != null)
+                movesManager.UseMove();
         }
 
         if (s2 != null)
         {
             board.allBalloons[x1, y1] = null;
-            StartCoroutine(TriggerSpecial(s2, x1, y1, b1.tag));
-            Destroy(b2); // sonra yok et
+            StartCoroutine(TriggerSpecial(s2, x1, y1, b1 != null ? b1.tag : null));
+            Destroy(b2);
             specialTriggered = true;
+            if (movesManager != null)
+                movesManager.UseMove();
         }
 
         if (!specialTriggered)
@@ -149,13 +158,23 @@ public class SwapManager : MonoBehaviour
                 }
             }
         }
-        // Vertical-4 special
         else if (item.state == SpecialItem.SpecialState.Vertical4)
         {
+            //  Animasyonu tetikle
+            AnimationManager.Instance.PlayEffect(
+         "vertical",
+         new Vector3(x * board.spacing + board.offsetX, 0 * board.spacing + board.offsetY, 0)
+     );
+
             for (int j = 0; j < board.height; j++)
             {
+                // Bu sırayla kontrol et, tüm sütun için çalışması için
+                if (x < 0 || x >= board.width || j < 0 || j >= board.height)
+                    continue;
+
                 if (TryHandleGlassAt(x, j)) continue;
                 if (TriggerAnotherSpecialIfExists(x, j)) continue;
+
                 var b = board.allBalloons[x, j];
                 if (b != null)
                 {
@@ -274,8 +293,16 @@ public class SwapManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
         var matchManager = GetComponent<MatchManager>();
-        if (!matchManager.CheckAndClearMatches())
+
+        if (matchManager.CheckAndClearMatches())
+        {
+            if (movesManager != null)
+                movesManager.UseMove();
+        }
+        else
+        {
             SwapWithoutCheck(x1, y1, x2, y2);
+        }
     }
 
     private void SwapWithoutCheck(int x1, int y1, int x2, int y2)

@@ -12,6 +12,9 @@ public struct BoxPosition { public int x, y; }
 
 public class GameBoard : MonoBehaviour
 {
+    [Header("▶ Hamle Ayarları")]
+    [Tooltip("Oyuncuya bu sahnede verilecek toplam hamle sayısı")]
+    public int maxMoves = 20;
     [Header("Breakable Tile Prefabs")]
     public GameObject glassPrefab;
     public GameObject boxPrefab;

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;  
+using System.Linq;
 [RequireComponent(typeof(GameBoard))]
 public class HintManager : MonoBehaviour
 {
@@ -49,15 +49,22 @@ public class HintManager : MonoBehaviour
                 StartCoroutine(HintBlink(sr));
         }
     }
-
     private IEnumerator HintBlink(SpriteRenderer sr)
     {
-        var tf = sr.transform;
-        var originalScale = tf.localScale;
+        if (sr == null) yield break;
+
+        Transform tf = sr.transform;
+        if (tf == null || tf.gameObject == null) yield break;
+
+        Vector3 originalScale = tf.localScale;
+
         for (int i = 0; i < 3; i++)
         {
+            if (tf == null) yield break;
             tf.localScale = originalScale * 1.2f;
             yield return new WaitForSeconds(0.2f);
+
+            if (tf == null) yield break;
             tf.localScale = originalScale;
             yield return new WaitForSeconds(0.2f);
         }
