@@ -89,19 +89,22 @@ public class BreakableBlockManager : MonoBehaviour
         return false;
     }
 
-    private void ReleaseBalloon(Vector2Int pos)
+ private void ReleaseBalloon(Vector2Int pos)
+{
+    var balloon = board.allBalloons[pos.x, pos.y];
+    if (balloon != null)
     {
-        var balloon = board.allBalloons[pos.x, pos.y];
-        if (balloon != null)
+        var script = balloon.GetComponent<BalloonItem>();
+        if (script != null)
         {
-            var script = balloon.GetComponent<BalloonItem>();
-            if (script != null)
-            {
-                script.isFrozen = false;
-                Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
-            }
+            script.isFrozen = false;
+            Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
         }
     }
+
+    // ⭐️ Yeni satır – hemen yeniden düşür
+    GetComponent<DropManager>()?.DropBalloons();
+}
     private void UpdateGlassSprite(Vector2Int pos)
     {
         var glass = GameObject.Find($"Glass_{pos.x}_{pos.y}");
