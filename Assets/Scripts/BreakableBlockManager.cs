@@ -10,20 +10,22 @@ public class BreakableBlockManager : MonoBehaviour
     public Sprite damagedBoxSprite;
 
 
-
+    private TaskManager taskManager;
     private GameBoard board;
 
 
     public Dictionary<Vector2Int, int> glassHealthDict = new Dictionary<Vector2Int, int>();
     public Dictionary<Vector2Int, int> boxHealthDict = new Dictionary<Vector2Int, int>();
 
+
     private void Awake()
     {
         board = GetComponent<GameBoard>();
+        taskManager = GetComponent<TaskManager>(); // 👈 bunu ekle
+
         if (board == null)
             Debug.LogError("GameBoard bileşeni bulunamadı!");
     }
-
     public bool TryDamageBlock(Vector2Int pos)
     {
         // Eğer bu pozisyonda cam varsa
@@ -43,9 +45,11 @@ public class BreakableBlockManager : MonoBehaviour
                 {
                     var sr = glassObj.GetComponent<SpriteRenderer>();
                     if (sr != null)
-                        sr.sprite = null; // 🧹 Sprite'ı kaldır
+                        sr.sprite = null;
 
-                    Destroy(glassObj); // 🗑️ Obje yok et
+                    taskManager?.OnItemDestroyed(glassObj); // ✅ sayaç bildirimi
+
+                    Destroy(glassObj);
                 }
 
                 glassHealthDict.Remove(pos);
@@ -64,12 +68,17 @@ public class BreakableBlockManager : MonoBehaviour
 
             if (newHealth == 1)
                 UpdateBoxSprite(pos);
-
             if (newHealth <= 0)
             {
-                Destroy(GameObject.Find($"Box_{pos.x}_{pos.y}"));
+                var boxObj = GameObject.Find($"Box_{pos.x}_{pos.y}");
+                if (boxObj != null)
+                {
+                    taskManager?.OnItemDestroyed(boxObj); // ✅ sayaç bildirimi
+                    Destroy(boxObj);
+                }
+
                 boxHealthDict.Remove(pos);
-                board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y); // ✅ Temizle
+                board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y);
                 ReleaseBalloon(pos);
             }
 
