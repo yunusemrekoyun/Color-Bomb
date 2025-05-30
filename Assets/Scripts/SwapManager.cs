@@ -192,6 +192,28 @@ public class SwapManager : MonoBehaviour
         // Block Blaster (Square4) special
         else if (item.state == SpecialItem.SpecialState.Square4)
         {
+            int radius = 1;
+            for (int dx = -radius; dx <= radius; dx++)
+            {
+                for (int dy = -radius; dy <= radius; dy++)
+                {
+                    int tx = x + dx, ty = y + dy;
+                    if (tx < 0 || tx >= board.width || ty < 0 || ty >= board.height)
+                        continue;
+                    if (TryHandleGlassAt(tx, ty)) continue;
+                    if (TriggerAnotherSpecialIfExists(tx, ty)) continue;
+                    var b = board.allBalloons[tx, ty];
+                    if (b != null)
+                    {
+                        toDestroy.Add(b);
+                        board.allBalloons[tx, ty] = null;
+                    }
+                }
+            }
+        }
+        // Block destreyer (Vertical5) special
+        else if (item.state == SpecialItem.SpecialState.Vertical5)
+        {
             List<Vector2Int> allBlockPositions = new List<Vector2Int>();
 
             // Cam blokları topla
@@ -214,28 +236,7 @@ public class SwapManager : MonoBehaviour
                 allBlockPositions.RemoveAt(index); // Aynı yere tekrar vurma
             }
         }
-        // Bomb (Vertical5) special
-        else if (item.state == SpecialItem.SpecialState.Vertical5)
-        {
-            int radius = 1;
-            for (int dx = -radius; dx <= radius; dx++)
-            {
-                for (int dy = -radius; dy <= radius; dy++)
-                {
-                    int tx = x + dx, ty = y + dy;
-                    if (tx < 0 || tx >= board.width || ty < 0 || ty >= board.height)
-                        continue;
-                    if (TryHandleGlassAt(tx, ty)) continue;
-                    if (TriggerAnotherSpecialIfExists(tx, ty)) continue;
-                    var b = board.allBalloons[tx, ty];
-                    if (b != null)
-                    {
-                        toDestroy.Add(b);
-                        board.allBalloons[tx, ty] = null;
-                    }
-                }
-            }
-        }
+        
         // Color-clear (Horizontal5) special
         else if (item.state == SpecialItem.SpecialState.Horizontal5 && targetTag != null)
         {
