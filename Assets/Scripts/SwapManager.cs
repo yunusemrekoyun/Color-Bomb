@@ -153,7 +153,11 @@ public class SwapManager : MonoBehaviour
                         Destroy(b);
                         continue;
                     }
-
+                    if (focusEffectPrefab != null)
+                    {
+                        GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                        Destroy(fx, 1f);
+                    }
                     toDestroy.Add(b);
                     board.allBalloons[i, y] = null;
                 }
@@ -183,7 +187,11 @@ public class SwapManager : MonoBehaviour
                         Destroy(b);
                         continue;
                     }
-
+                    if (focusEffectPrefab != null)
+                    {
+                        GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                        Destroy(fx, 1f);
+                    }
                     toDestroy.Add(b);
                     board.allBalloons[x, j] = null;
                 }
@@ -205,6 +213,11 @@ public class SwapManager : MonoBehaviour
                     var b = board.allBalloons[tx, ty];
                     if (b != null)
                     {
+                        if (focusEffectPrefab != null)
+                        {
+                            GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                            Destroy(fx, 1f);
+                        }
                         toDestroy.Add(b);
                         board.allBalloons[tx, ty] = null;
                     }
@@ -236,7 +249,7 @@ public class SwapManager : MonoBehaviour
                 allBlockPositions.RemoveAt(index); // Aynı yere tekrar vurma
             }
         }
-        
+
         // Color-clear (Horizontal5) special
         else if (item.state == SpecialItem.SpecialState.Horizontal5 && targetTag != null)
         {
@@ -252,7 +265,11 @@ public class SwapManager : MonoBehaviour
                         var bi = b.GetComponent<BalloonItem>();
                         if (bi != null && bi.isFrozen)
                             continue; // ❄️ Frozen balon → yok etme
-
+                        if (focusEffectPrefab != null)
+                        {
+                            GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                            Destroy(fx, 1f);
+                        }
                         toDestroy.Add(b);
                         board.allBalloons[i, j] = null;
                     }
@@ -269,7 +286,15 @@ public class SwapManager : MonoBehaviour
         }
 
         foreach (var obj in toDestroy)
+        {
+            if (explosionEffectPrefab != null)
+            {
+                GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
+                Destroy(fx, 1f); // efekt 1 saniye sonra kaybolur
+            }
+
             Destroy(obj);
+        }
 
         yield return new WaitForSeconds(0.4f);
 
@@ -286,6 +311,19 @@ public class SwapManager : MonoBehaviour
         if (special != null)
         {
             board.allBalloons[x, y] = null;
+
+            if (focusEffectPrefab != null)
+            {
+                GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                Destroy(fx, 1f);
+            }
+
+            if (explosionEffectPrefab != null)
+            {
+                GameObject fx = Instantiate(explosionEffectPrefab, b.transform.position, Quaternion.identity);
+                Destroy(fx, 1f);
+            }
+
             StartCoroutine(TriggerSpecial(special, x, y));
             Destroy(b);
             return true;
