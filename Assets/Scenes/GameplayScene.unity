@@ -373,34 +373,25 @@ MonoBehaviour:
   glassPrefab: {fileID: 8746566931006446213, guid: 65bde1904975a394d924b46436041bb4, type: 3}
   boxPrefab: {fileID: 2495401720811329449, guid: f0e83cdbf5f17504b88b08f9a6c5dccb, type: 3}
   balloonPrefabs:
-  - {fileID: 4682285765965569786, guid: 33d77cca8977541a2966b473ff7ac578, type: 3}
   - {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
   - {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
   - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
-  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
-  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
-  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
+  - {fileID: 80488115603686140, guid: fba7825b8805a4008b7628e9cdcf673c, type: 3}
+  - {fileID: 80488115603686140, guid: fba7825b8805a4008b7628e9cdcf673c, type: 3}
+  - {fileID: 80488115603686140, guid: fba7825b8805a4008b7628e9cdcf673c, type: 3}
+  - {fileID: 80488115603686140, guid: fba7825b8805a4008b7628e9cdcf673c, type: 3}
+  - {fileID: 80488115603686140, guid: fba7825b8805a4008b7628e9cdcf673c, type: 3}
   scoreMultiplier: 10
-  blockedPositions:
-  - x: 0
-    y: 0
+  blockedPositions: []
   glassTiles: []
-  boxTiles:
-  - x: 1
-    y: 2
-  - x: 4
-    y: 5
-  - x: 5
-    y: 6
-  - x: 3
-    y: 6
+  boxTiles: []
   horizontal5SpecialPrefab: {fileID: 7030282372386337094, guid: 010c625febb324f06a53f3843a92fc1d, type: 3}
   vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
   square4SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
   horizontal4SpecialPrefab: {fileID: 7030282372386337094, guid: b07ea99ead18d4e23b2e5869fe6d3a2b, type: 3}
   vertical4SpecialPrefab: {fileID: 7030282372386337094, guid: 19726eeb8bb304e63ba42a18396f7eac, type: 3}
-  width: 6
-  height: 8
+  width: 8
+  height: 9
   spacing: 3
   itemBackgroundPrefab: {fileID: 388787130618852923, guid: 31efe7e584b234a7cb35d67e8dd67862, type: 3}
   hintDelay: 5
@@ -905,7 +896,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 20
+  orthographic size: 25
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1114,7 +1105,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1408028508}
   - {fileID: 125155979}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2110,7 +2100,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1408028508}
   - component: {fileID: 1408028507}
-  m_Layer: 7
+  - component: {fileID: 1408028509}
+  m_Layer: 5
   m_Name: WorldBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2172,21 +2163,33 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!4 &1408028508
-Transform:
+--- !u!224 &1408028508
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1408028506}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -4320}
-  m_LocalScale: {x: 75.51799, y: 75.51799, z: 75.51799}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 657963591}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.76273215, y: 0}
+  m_SizeDelta: {x: 1080, y: 1920}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1408028509
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408028506}
+  m_CullTransparentMesh: 1
 --- !u!1 &1438777884
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,6 +2868,7 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1408028508}
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 66861610}

@@ -115,220 +115,169 @@ public class SwapManager : MonoBehaviour
 
     public IEnumerator TriggerSpecial(SpecialItem item, int x, int y, string targetTag = null)
     {
+        var toDestroy = new List<GameObject>();
+
+        // Yardımcı fonksiyon: önce breakable'lara hasar ver
+        bool TryDamageBreakableAt(int i, int j)
         {
-            var toDestroy = new List<GameObject>();
+            Vector2Int pos = new Vector2Int(i, j);
+            return board.breakableManager.TryDamageBlock(pos);
+        }
 
-            // Yardımcı: pozisyona göre camı kırma/düşürme kontrolü
-            bool TryHandleGlassAt(int i, int j)
+        // Horizontal-4 special
+        if (item.state == SpecialItem.SpecialState.Horizontal4)
+        {
+            for (int i = 0; i < board.width; i++)
             {
-                var balloon = board.allBalloons[i, j];
-                if (balloon == null) return false;
+                if (TryDamageBreakableAt(i, y)) continue;
+                if (TriggerAnotherSpecialIfExists(i, y)) continue;
 
-                var bi = balloon.GetComponent<BalloonItem>();
-                if (bi != null && bi.isFrozen)
+                var b = board.allBalloons[i, y];
+                if (b != null)
                 {
-                    var gridPos = new Vector2Int(i, j);
-                    if (board.breakableManager.glassHealthDict.TryGetValue(gridPos, out int health))
+                    var special = b.GetComponent<SpecialItem>();
+                    if (special != null && special != item)
                     {
-                        health -= 1;
-                        board.breakableManager.glassHealthDict[gridPos] = health;
-                        Debug.Log($"🔨 Cam kırılıyor at {gridPos}, kalan can: {health}");
-
-                        if (health <= 0)
-                        {
-                            // 1) Sözlükten çıkar
-                            board.breakableManager.glassHealthDict.Remove(gridPos);
-
-                            // 2) Sahnedeki Glass objesini bulup yok et
-                            var glassObj = GameObject.Find($"Glass_{i}_{j}");
-                            if (glassObj != null)
-                            {
-                                Destroy(glassObj);
-                                Debug.Log($"🗑️ Glass_{i}_{j} sahneden silindi.");
-                            }
-
-                            // 3) Balonu serbest bırak
-                            bi.isFrozen = false;
-                            Debug.Log($"✅ Cam yok! Balon ({i},{j}) artık serbest.");
-                        }
+                        board.allBalloons[i, y] = null;
+                        StartCoroutine(TriggerSpecial(special, i, y));
+                        Destroy(b);
+                        continue;
                     }
-                    // Cam olan hücre için patlatmayı atla
-                    return true;
+
+                    if (focusEffectPrefab != null)
+                    {
+                        GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                        Destroy(fx, 1f);
+                    }
+
+                    toDestroy.Add(b);
+                    board.allBalloons[i, y] = null;
                 }
-
-                return false;
             }
-
-            // Horizontal-4 special
-            if (item.state == SpecialItem.SpecialState.Horizontal4)
+        }
+        else if (item.state == SpecialItem.SpecialState.Vertical4)
+        {
+            for (int j = 0; j < board.height; j++)
             {
-                for (int i = 0; i < board.width; i++)
+                if (TryDamageBreakableAt(x, j)) continue;
+                if (TriggerAnotherSpecialIfExists(x, j)) continue;
+
+                var b = board.allBalloons[x, j];
+                if (b != null)
                 {
-                    if (TryHandleGlassAt(i, y)) continue;
-                    if (TriggerAnotherSpecialIfExists(i, y)) continue;
-                    var b = board.allBalloons[i, y];
+                    var special = b.GetComponent<SpecialItem>();
+                    if (special != null && special != item)
+                    {
+                        board.allBalloons[x, j] = null;
+                        StartCoroutine(TriggerSpecial(special, x, j));
+                        Destroy(b);
+                        continue;
+                    }
+
+                    if (focusEffectPrefab != null)
+                    {
+                        GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                        Destroy(fx, 1f);
+                    }
+
+                    toDestroy.Add(b);
+                    board.allBalloons[x, j] = null;
+                }
+            }
+        }
+        else if (item.state == SpecialItem.SpecialState.Square4)
+        {
+            int radius = 1;
+            for (int dx = -radius; dx <= radius; dx++)
+            {
+                for (int dy = -radius; dy <= radius; dy++)
+                {
+                    int tx = x + dx, ty = y + dy;
+                    if (tx < 0 || tx >= board.width || ty < 0 || ty >= board.height) continue;
+
+                    if (TryDamageBreakableAt(tx, ty)) continue;
+                    if (TriggerAnotherSpecialIfExists(tx, ty)) continue;
+
+                    var b = board.allBalloons[tx, ty];
                     if (b != null)
                     {
-                        // Zincirleme kontrolü
-                        var special = b.GetComponent<SpecialItem>();
-                        if (special != null && special != item) // kendini tekrar tetikleme
-                        {
-                            board.allBalloons[i, y] = null;
-                            StartCoroutine(TriggerSpecial(special, i, y));
-                            Destroy(b);
-                            continue;
-                        }
                         if (focusEffectPrefab != null)
                         {
                             GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
                             Destroy(fx, 1f);
                         }
+
                         toDestroy.Add(b);
-                        board.allBalloons[i, y] = null;
+                        board.allBalloons[tx, ty] = null;
                     }
                 }
             }
-            else if (item.state == SpecialItem.SpecialState.Vertical4)
+        }
+        else if (item.state == SpecialItem.SpecialState.Vertical5)
+        {
+            List<Vector2Int> allBlockPositions = new List<Vector2Int>();
+            foreach (var entry in board.breakableManager.glassHealthDict)
+                if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+            foreach (var entry in board.breakableManager.boxHealthDict)
+                if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+
+            for (int i = 0; i < 3; i++)
             {
-
-
+                if (allBlockPositions.Count == 0) break;
+                int index = Random.Range(0, allBlockPositions.Count);
+                Vector2Int target = allBlockPositions[index];
+                board.breakableManager.TryDamageBlock(target);
+                allBlockPositions.RemoveAt(index);
+            }
+        }
+        else if (item.state == SpecialItem.SpecialState.Horizontal5 && targetTag != null)
+        {
+            for (int i = 0; i < board.width; i++)
+            {
                 for (int j = 0; j < board.height; j++)
                 {
-                    // Bu sırayla kontrol et, tüm sütun için çalışması için
-                    if (x < 0 || x >= board.width || j < 0 || j >= board.height)
-                        continue;
+                    if (TryDamageBreakableAt(i, j)) continue;
 
-                    if (TryHandleGlassAt(x, j)) continue;
-                    if (TriggerAnotherSpecialIfExists(x, j)) continue;
-
-                    var b = board.allBalloons[x, j];
-                    if (b != null)
+                    var b = board.allBalloons[i, j];
+                    if (b != null && b.tag == targetTag)
                     {
-                        var special = b.GetComponent<SpecialItem>();
-                        if (special != null && special != item)
-                        {
-                            board.allBalloons[x, j] = null;
-                            StartCoroutine(TriggerSpecial(special, x, j));
-                            Destroy(b);
-                            continue;
-                        }
+                        var bi = b.GetComponent<BalloonItem>();
+                        if (bi != null && bi.isFrozen) continue;
+
                         if (focusEffectPrefab != null)
                         {
                             GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
                             Destroy(fx, 1f);
                         }
+
                         toDestroy.Add(b);
-                        board.allBalloons[x, j] = null;
+                        board.allBalloons[i, j] = null;
                     }
                 }
             }
-            // Block Blaster (Square4) special
-            else if (item.state == SpecialItem.SpecialState.Square4)
-            {
-                int radius = 1;
-                for (int dx = -radius; dx <= radius; dx++)
-                {
-                    for (int dy = -radius; dy <= radius; dy++)
-                    {
-                        int tx = x + dx, ty = y + dy;
-                        if (tx < 0 || tx >= board.width || ty < 0 || ty >= board.height)
-                            continue;
-                        if (TryHandleGlassAt(tx, ty)) continue;
-                        if (TriggerAnotherSpecialIfExists(tx, ty)) continue;
-                        var b = board.allBalloons[tx, ty];
-                        if (b != null)
-                        {
-                            if (focusEffectPrefab != null)
-                            {
-                                GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
-                                Destroy(fx, 1f);
-                            }
-                            toDestroy.Add(b);
-                            board.allBalloons[tx, ty] = null;
-                        }
-                    }
-                }
-            }
-            // Block destreyer (Vertical5) special
-            else if (item.state == SpecialItem.SpecialState.Vertical5)
-            {
-                List<Vector2Int> allBlockPositions = new List<Vector2Int>();
-
-                // Cam blokları topla
-                foreach (var entry in board.breakableManager.glassHealthDict)
-                    if (entry.Value > 0) allBlockPositions.Add(entry.Key);
-
-                // Box blokları topla
-                foreach (var entry in board.breakableManager.boxHealthDict)
-                    if (entry.Value > 0) allBlockPositions.Add(entry.Key);
-
-                // 3 kez hasar gönder
-                for (int i = 0; i < 3; i++)
-                {
-                    if (allBlockPositions.Count == 0) break;
-
-                    int index = Random.Range(0, allBlockPositions.Count);
-                    Vector2Int target = allBlockPositions[index];
-
-                    board.breakableManager.TryDamageBlock(target); // ✅ Merkezden yönettiğin fonksiyon
-                    allBlockPositions.RemoveAt(index); // Aynı yere tekrar vurma
-                }
-            }
-
-            // Color-clear (Horizontal5) special
-            else if (item.state == SpecialItem.SpecialState.Horizontal5 && targetTag != null)
-            {
-                for (int i = 0; i < board.width; i++)
-                {
-                    for (int j = 0; j < board.height; j++)
-                    {
-                        if (TryHandleGlassAt(i, j)) continue;
-
-                        var b = board.allBalloons[i, j];
-                        if (b != null && b.tag == targetTag)
-                        {
-                            var bi = b.GetComponent<BalloonItem>();
-                            if (bi != null && bi.isFrozen)
-                                continue; // ❄️ Frozen balon → yok etme
-                            if (focusEffectPrefab != null)
-                            {
-                                GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
-                                Destroy(fx, 1f);
-                            }
-                            toDestroy.Add(b);
-                            board.allBalloons[i, j] = null;
-                        }
-                    }
-                }
-            }
-
-            // Klasik 3’lük/4’lük/5’lik match temizlemeleri bu metotta değil
-            // Yalnızca special ile yok edilecekler
-            if (toDestroy.Count > 0)
-            {
-                int multiplier = board.scoreMultiplier > 0 ? board.scoreMultiplier : 1;
-                ScoreManager.Instance.AddScore(toDestroy.Count * multiplier);
-            }
-
-            foreach (var obj in toDestroy)
-            {
-                if (explosionEffectPrefab != null)
-                {
-                    GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
-                    Destroy(fx, 1f); // efekt 1 saniye sonra kaybolur
-                }
-
-                Destroy(obj);
-            }
-
-            yield return new WaitForSeconds(0.4f);
-
-            GetComponent<DropManager>().DropBalloons();
         }
+
+        // Skor ve yok etme
+        if (toDestroy.Count > 0)
         {
+            int multiplier = board.scoreMultiplier > 0 ? board.scoreMultiplier : 1;
+            ScoreManager.Instance.AddScore(toDestroy.Count * multiplier);
         }
-    }
 
+        foreach (var obj in toDestroy)
+        {
+            if (explosionEffectPrefab != null)
+            {
+                GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
+                Destroy(fx, 1f);
+            }
+
+            Destroy(obj);
+        }
+
+        yield return new WaitForSeconds(0.4f);
+        GetComponent<DropManager>().DropBalloons();
+    }
     private bool TriggerAnotherSpecialIfExists(int x, int y)
     {
         var b = board.allBalloons[x, y];
