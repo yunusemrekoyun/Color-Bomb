@@ -1,4 +1,3 @@
-// DropManager.cs
 using System.Collections;
 using UnityEngine;
 
@@ -28,11 +27,13 @@ public class DropManager : MonoBehaviour
                 var current = board.allBalloons[x, y];
                 var balloon = current != null ? current.GetComponent<BalloonItem>() : null;
 
-                // 🧱 Eğer cam varsa ve hâlâ sahnedeyse, bu item yerinde sabit kalmalı
-                if (board.breakableManager.glassHealthDict.ContainsKey(new Vector2Int(x, y)))
+                // 🧱 Eğer cam varsa veya kutu varsa ve hâlâ sahnedeyse, bu item yerinde sabit kalmalı
+                Vector2Int pos = new Vector2Int(x, y);
+                if (board.breakableManager.glassHealthDict.ContainsKey(pos) ||
+                    board.breakableManager.boxHealthDict.ContainsKey(pos))
                     continue;
 
-                // ❄️ Eğer bu balon cam içindeyse ve isFrozen true ise, hareket ettirme
+                // ❄️ Eğer bu balon donmuşsa, hareket ettirme
                 if (balloon != null && balloon.isFrozen)
                     continue;
 
@@ -66,7 +67,7 @@ public class DropManager : MonoBehaviour
                 }
             }
 
-            // 🧼 Spawn kısmı — cam varsa veya camın içindeki balon isFrozen ise, spawn etme
+            // 🧼 Spawn kısmı — cam varsa veya kutu varsa ya da frozen ise spawn etme
             for (int y = board.height - 1; y >= 0; y--)
             {
                 var pos = new Vector2Int(x, y);
@@ -76,6 +77,7 @@ public class DropManager : MonoBehaviour
                 if (existing == null &&
                     !board.blockedPositions.Exists(p => p.x == x && p.y == y) &&
                     !board.breakableManager.glassHealthDict.ContainsKey(pos) &&
+                    !board.breakableManager.boxHealthDict.ContainsKey(pos) &&
                     !isFrozenHere)
                 {
                     Vector3 spawnPos = new Vector3(x * board.spacing + board.offsetX,
@@ -103,6 +105,7 @@ public class DropManager : MonoBehaviour
         else
             GetComponent<BoardGenerator>().StartCheckBoardHasMoves();
     }
+
     private IEnumerator ClearAfterFallWithDelay()
     {
         yield return new WaitForSeconds(0.6f); // 🕓 Animasyonların inmesini bekle
@@ -115,6 +118,7 @@ public class DropManager : MonoBehaviour
         else
             GetComponent<BoardGenerator>().StartCheckBoardHasMoves();
     }
+
     private bool AreBalloonsMoving()
     {
         foreach (var b in board.allBalloons)
@@ -124,7 +128,6 @@ public class DropManager : MonoBehaviour
             if (rb != null && rb.linearVelocity.magnitude > 0.01f)
                 return true;
 
-            // Eğer Rigidbody yoksa ve MoveTo kullanıldıysa: Z değişimiyle pozisyonu kontrol et
             var bi = b.GetComponent<BalloonItem>();
             if (bi != null && bi.transform.hasChanged)
             {
