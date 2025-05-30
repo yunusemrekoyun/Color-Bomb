@@ -385,7 +385,15 @@ MonoBehaviour:
   - x: 0
     y: 0
   glassTiles: []
-  boxTiles: []
+  boxTiles:
+  - x: 1
+    y: 2
+  - x: 4
+    y: 5
+  - x: 5
+    y: 6
+  - x: 3
+    y: 6
   horizontal5SpecialPrefab: {fileID: 7030282372386337094, guid: 010c625febb324f06a53f3843a92fc1d, type: 3}
   vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
   square4SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
@@ -412,8 +420,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c90dc64332c084a9521459cdb98d96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  focusEffectPrefab: {fileID: 0}
-  explosionEffectPrefab: {fileID: 0}
+  focusEffectPrefab: {fileID: 3026229147446703312, guid: 6f5b48af2e5f24e7c9675e9b3e9adc5a, type: 3}
+  explosionEffectPrefab: {fileID: 9156380635533055333, guid: 75cb5431c4196495fb8f816da8d89ecd, type: 3}
 --- !u!114 &66861618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,8 +461,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyTasks:
-  - prefab: {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
-    count: 15
+  - prefab: {fileID: 2495401720811329449, guid: f0e83cdbf5f17504b88b08f9a6c5dccb, type: 3}
+    count: 5
     remaining: 0
   - prefab: {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
     count: 15
