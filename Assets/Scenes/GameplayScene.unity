@@ -385,8 +385,8 @@ MonoBehaviour:
   glassTiles: []
   boxTiles: []
   horizontal5SpecialPrefab: {fileID: 7030282372386337094, guid: 010c625febb324f06a53f3843a92fc1d, type: 3}
-  vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
-  square4SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
+  vertical5SpecialPrefab: {fileID: 7030282372386337094, guid: 7d35ca205f7ac4cd889210574d6e7950, type: 3}
+  square4SpecialPrefab: {fileID: 7030282372386337094, guid: e0d630a918dac44ce84c1d539ff3e2e2, type: 3}
   horizontal4SpecialPrefab: {fileID: 7030282372386337094, guid: b07ea99ead18d4e23b2e5869fe6d3a2b, type: 3}
   vertical4SpecialPrefab: {fileID: 7030282372386337094, guid: 19726eeb8bb304e63ba42a18396f7eac, type: 3}
   width: 6
