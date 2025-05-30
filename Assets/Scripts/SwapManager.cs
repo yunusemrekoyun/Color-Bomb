@@ -160,11 +160,7 @@ public class SwapManager : MonoBehaviour
         }
         else if (item.state == SpecialItem.SpecialState.Vertical4)
         {
-            //  Animasyonu tetikle
-            AnimationManager.Instance.PlayEffect(
-         "vertical",
-         new Vector3(x * board.spacing + board.offsetX, 0 * board.spacing + board.offsetY, 0)
-     );
+          
 
             for (int j = 0; j < board.height; j++)
             {
