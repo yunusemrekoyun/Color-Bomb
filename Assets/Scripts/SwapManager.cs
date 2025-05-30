@@ -250,75 +250,75 @@ public class SwapManager : MonoBehaviour
                 }
             }
             // Block destreyer (Vertical5) special
-            else if (item.state == SpecialItem.SpecialState.Vertical5)
+           else if (item.state == SpecialItem.SpecialState.Vertical5)
+{
+    List<Vector2Int> allBlockPositions = new List<Vector2Int>();
+
+    // Cam blokları topla
+    foreach (var entry in board.breakableManager.glassHealthDict)
+        if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+
+    // Box blokları topla
+    foreach (var entry in board.breakableManager.boxHealthDict)
+        if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+
+    if (allBlockPositions.Count == 0)
+    {
+        // Eğer hiç engel yoksa, ColorClear gibi çalışsın 🎯
+
+        // 1. Tüm sahnedeki balonlardan random bir renk seç
+        List<string> availableTags = new List<string>();
+        for (int i = 0; i < board.width; i++)
+        {
+            for (int j = 0; j < board.height; j++)
             {
-                List<Vector2Int> allBlockPositions = new List<Vector2Int>();
+                var b = board.allBalloons[i, j];
+                if (b != null && !availableTags.Contains(b.tag))
+                    availableTags.Add(b.tag);
+            }
+        }
 
-                // Cam blokları topla
-                foreach (var entry in board.breakableManager.glassHealthDict)
-                    if (entry.Value > 0) allBlockPositions.Add(entry.Key);
+        if (availableTags.Count > 0)
+        {
+            string randomTargetTag = availableTags[Random.Range(0, availableTags.Count)];
 
-                // Box blokları topla
-                foreach (var entry in board.breakableManager.boxHealthDict)
-                    if (entry.Value > 0) allBlockPositions.Add(entry.Key);
-
-                if (allBlockPositions.Count == 0)
+            for (int i = 0; i < board.width; i++)
+            {
+                for (int j = 0; j < board.height; j++)
                 {
-                    // Eğer hiç engel yoksa, ColorClear gibi çalışsın 🎯
-
-                    // 1. Tüm sahnedeki balonlardan random bir renk seç
-                    List<string> availableTags = new List<string>();
-                    for (int i = 0; i < board.width; i++)
+                    var b = board.allBalloons[i, j];
+                    if (b != null && b.tag == randomTargetTag)
                     {
-                        for (int j = 0; j < board.height; j++)
+                        var bi = b.GetComponent<BalloonItem>();
+                        if (bi != null && bi.isFrozen) continue;
+
+                        if (focusEffectPrefab != null)
                         {
-                            var b = board.allBalloons[i, j];
-                            if (b != null && !availableTags.Contains(b.tag))
-                                availableTags.Add(b.tag);
+                            GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
+                            Destroy(fx, 1f);
                         }
-                    }
-
-                    if (availableTags.Count > 0)
-                    {
-                        string randomTargetTag = availableTags[Random.Range(0, availableTags.Count)];
-
-                        for (int i = 0; i < board.width; i++)
-                        {
-                            for (int j = 0; j < board.height; j++)
-                            {
-                                var b = board.allBalloons[i, j];
-                                if (b != null && b.tag == randomTargetTag)
-                                {
-                                    var bi = b.GetComponent<BalloonItem>();
-                                    if (bi != null && bi.isFrozen) continue;
-
-                                    if (focusEffectPrefab != null)
-                                    {
-                                        GameObject fx = Instantiate(focusEffectPrefab, b.transform.position, Quaternion.identity);
-                                        Destroy(fx, 1f);
-                                    }
-                                    toDestroy.Add(b);
-                                    board.allBalloons[i, j] = null;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // Blokları hedef al → Klasik Vertical5 davranışı
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (allBlockPositions.Count == 0) break;
-
-                        int index = Random.Range(0, allBlockPositions.Count);
-                        Vector2Int target = allBlockPositions[index];
-
-                        board.breakableManager.TryDamageBlock(target);
-                        allBlockPositions.RemoveAt(index);
+                        toDestroy.Add(b);
+                        board.allBalloons[i, j] = null;
                     }
                 }
             }
+        }
+    }
+    else
+    {
+        // Blokları hedef al → Klasik Vertical5 davranışı
+        for (int i = 0; i < 3; i++)
+        {
+            if (allBlockPositions.Count == 0) break;
+
+            int index = Random.Range(0, allBlockPositions.Count);
+            Vector2Int target = allBlockPositions[index];
+
+            board.breakableManager.TryDamageBlock(target);
+            allBlockPositions.RemoveAt(index);
+        }
+    }
+}
             // Color-clear (Horizontal5) special
             else if (item.state == SpecialItem.SpecialState.Horizontal5 && targetTag != null)
             {
