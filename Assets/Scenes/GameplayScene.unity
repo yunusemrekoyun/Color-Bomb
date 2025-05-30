@@ -410,6 +410,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c90dc64332c084a9521459cdb98d96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  focusEffectPrefab: {fileID: 0}
+  explosionEffectPrefab: {fileID: 0}
 --- !u!114 &66861618
 MonoBehaviour:
   m_ObjectHideFlags: 0

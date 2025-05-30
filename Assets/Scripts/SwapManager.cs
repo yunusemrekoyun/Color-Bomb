@@ -14,7 +14,8 @@ public class SwapManager : MonoBehaviour
         hintManager = GetComponent<HintManager>();
         movesManager = FindFirstObjectByType<MovesManager>();
     }
-
+    public GameObject focusEffectPrefab;
+    public GameObject explosionEffectPrefab;
     public void SwapBalloons(int x1, int y1, int x2, int y2)
     {
         hintManager.ResetIdleTimer();
@@ -160,7 +161,7 @@ public class SwapManager : MonoBehaviour
         }
         else if (item.state == SpecialItem.SpecialState.Vertical4)
         {
-          
+
 
             for (int j = 0; j < board.height; j++)
             {
