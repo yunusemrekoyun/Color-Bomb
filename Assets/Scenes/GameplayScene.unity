@@ -378,6 +378,9 @@ MonoBehaviour:
   - {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
   - {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
   - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
+  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
+  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
+  - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
   scoreMultiplier: 10
   blockedPositions:
   - x: 0
@@ -493,7 +496,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf8182bd814804415ad7c433c4bf8d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationPrefab: {fileID: 8547732038975776702, guid: 8c58bce91eafd456cbb4fa740d2d3516, type: 3}
 --- !u!1 &125155978
 GameObject:
   m_ObjectHideFlags: 0
