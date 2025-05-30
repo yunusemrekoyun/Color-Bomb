@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4897a7ce5e96994e8877120f114ae0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMoves: 2
+  maxMoves: 50
   glassPrefab: {fileID: 8746566931006446213, guid: 65bde1904975a394d924b46436041bb4, type: 3}
   boxPrefab: {fileID: 2495401720811329449, guid: f0e83cdbf5f17504b88b08f9a6c5dccb, type: 3}
   balloonPrefabs:
@@ -378,6 +378,7 @@ MonoBehaviour:
   - {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
   - {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
   - {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
+  scoreMultiplier: 10
   blockedPositions:
   - x: 0
     y: 0
@@ -449,13 +450,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyTasks:
   - prefab: {fileID: 8058870465845787347, guid: b842ffce5c31341908da9eac4ef3368f, type: 3}
-    count: 3
+    count: 15
     remaining: 0
   - prefab: {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
-    count: 5
+    count: 15
     remaining: 0
   - prefab: {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
-    count: 7
+    count: 15
     remaining: 0
   taskImages:
   - {fileID: 696368059}
@@ -490,7 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf8182bd814804415ad7c433c4bf8d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationPrefab: {fileID: 6449956040227662505, guid: de144162ac25b4ff2a6bd7b22a68ee21, type: 3}
+  animationPrefab: {fileID: 8547732038975776702, guid: 8c58bce91eafd456cbb4fa740d2d3516, type: 3}
 --- !u!1 &125155978
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +604,7 @@ RectTransform:
   - {fileID: 1063831094}
   - {fileID: 2029843057}
   - {fileID: 303310380}
+  - {fileID: 417061893}
   m_Father: {fileID: 990424897}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -622,7 +624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: e41a591dbf3f24f4bbf70b3d52584926, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -631,10 +633,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 1399725893816511699, guid: 37f4ca41988b9419ebf125b71e942b47, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -722,6 +724,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 303310379}
+  m_CullTransparentMesh: 1
+--- !u!1 &417061892
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 417061893}
+  - component: {fileID: 417061895}
+  - component: {fileID: 417061894}
+  m_Layer: 5
+  m_Name: FillBorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &417061893
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417061892}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 136242455}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &417061894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417061892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -373347575079878715, guid: 125c0ed87beb847a5916a0ad0847c202, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &417061895
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417061892}
   m_CullTransparentMesh: 1
 --- !u!1 &519420028
 GameObject:
@@ -1405,6 +1482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 915457859}
   - component: {fileID: 915457860}
+  - component: {fileID: 915457861}
   m_Layer: 0
   m_Name: ScoreManager
   m_TagString: Untagged
@@ -1441,6 +1519,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentScore: 0
   scoreText: {fileID: 702658275}
+--- !u!114 &915457861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915457858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059e3cbc83b6e421bb94d8c6d98fcddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fillImage: {fileID: 136242456}
+  starImages:
+  - {fileID: 1063831095}
+  - {fileID: 2029843058}
+  - {fileID: 303310381}
+  greyStar: {fileID: 8121445304733685897, guid: 5c0f6b91a74014e0cae335497b421dc5, type: 3}
+  yellowStar: {fileID: 5199979006384268662, guid: 2375c6b5460064cc3b530dec33c2643f, type: 3}
+  maxScore: 100
+  yellowStarMaterial: {fileID: 2100000, guid: e41a591dbf3f24f4bbf70b3d52584926, type: 2}
+  fillBorder: {fileID: 417061893}
+  fillSpeed: 3
 --- !u!1 &990424896
 GameObject:
   m_ObjectHideFlags: 0
