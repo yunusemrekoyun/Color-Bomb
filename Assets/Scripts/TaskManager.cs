@@ -77,10 +77,22 @@ public class TaskManager : MonoBehaviour
             }
         }
     }
-
     void CheckAllTasksComplete()
     {
         if (destroyTasks.All(t => t.remaining <= 0))
+        {
             Debug.Log("Level tamamlandı");
+
+            // ✅ Kalan hamleleri puana çevir
+            var movesManager = FindFirstObjectByType<MovesManager>();
+            if (movesManager != null)
+            {
+                int remaining = movesManager.GetRemainingMoves();
+                int bonus = remaining * 50;
+
+                ScoreManager.Instance.AddScore(bonus);
+                Debug.Log($"🎁 Bonus Skor Eklendi: {remaining} x 20 = {bonus}");
+            }
+        }
     }
 }

@@ -11,7 +11,9 @@ public class ScoreFillBar : MonoBehaviour
     public int maxScore = 100;
     public Material yellowStarMaterial;
     private GameBoard gameBoard;
-
+    public RectTransform fillBorder;
+    private float currentFill = 0f;
+    public float fillSpeed = 3f;
     void Start()
     {
         gameBoard = FindFirstObjectByType<GameBoard>();
@@ -29,7 +31,8 @@ public class ScoreFillBar : MonoBehaviour
             (float)currentScore / (maxScore * gameBoard.scoreMultiplier)
         );
 
-        fillImage.fillAmount = fillAmount;
+        currentFill = Mathf.Lerp(currentFill, fillAmount, Time.deltaTime * fillSpeed);
+        fillImage.fillAmount = currentFill;
 
         for (int i = 0; i < starImages.Length; i++)
         {
@@ -50,6 +53,11 @@ public class ScoreFillBar : MonoBehaviour
             {
                 starImages[i].sprite = greyStar;
                 starImages[i].material = null;
+            }
+            if (fillBorder != null)
+            {
+                float barWidth = ((RectTransform)fillImage.transform).rect.width * fillImage.transform.lossyScale.x;
+                fillBorder.anchoredPosition = new Vector2(barWidth * currentFill, 0f);
             }
         }
     }

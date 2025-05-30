@@ -22,7 +22,10 @@ public class MovesManager : MonoBehaviour
         remainingMoves = board.maxMoves;
         UpdateMovesUI();
     }
-
+    public int GetRemainingMoves()
+    {
+        return remainingMoves;
+    }
     public void UseMove()
     {
         if (remainingMoves <= 0) return;
