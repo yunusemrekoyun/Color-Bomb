@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BreakableBlockManager : MonoBehaviour
 {
-
+    public static event System.Action<Vector2Int> OnBlockReleased;
 
     [Header("Damaged Sprites")]
     public Sprite damagedGlassSprite;
@@ -89,21 +89,27 @@ public class BreakableBlockManager : MonoBehaviour
         return false;
     }
 
- private void ReleaseBalloon(Vector2Int pos)
-{
-    var balloon = board.allBalloons[pos.x, pos.y];
-    if (balloon != null)
+    private void ReleaseBalloon(Vector2Int pos)
     {
-        var script = balloon.GetComponent<BalloonItem>();
-        if (script != null)
+        var balloon = board.allBalloons[pos.x, pos.y];
+        if (balloon != null)
         {
-            script.isFrozen = false;
-            Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
+            var script = balloon.GetComponent<BalloonItem>();
+            if (script != null)
+            {
+                // 1) Balonu donukluktan çıkar
+                script.isFrozen = false;
+
+                // 2) “lockedItems” setinden sil
+                BoardGenerator.lockedItems.Remove(balloon);
+
+                Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
+
+                // 3) Event’i tetikle (DropManager bunu dinliyor)
+                OnBlockReleased?.Invoke(pos);
+            }
         }
     }
-
- 
-}
     private void UpdateGlassSprite(Vector2Int pos)
     {
         var glass = GameObject.Find($"Glass_{pos.x}_{pos.y}");
