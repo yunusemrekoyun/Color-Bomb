@@ -17,6 +17,8 @@ public class DestroyTask
 
 public class TaskManager : MonoBehaviour
 {
+    public VictoryPanelController victoryPanel;
+
     [Header("◆ Balloon Destroy Tasks ◆")]
     [Tooltip("Aynı prefab‑ı birden fazla eklemeyin")]
     public List<DestroyTask> destroyTasks = new List<DestroyTask>(3);
@@ -77,22 +79,36 @@ public class TaskManager : MonoBehaviour
             }
         }
     }
-    void CheckAllTasksComplete()
+   void CheckAllTasksComplete()
+{
+    if (destroyTasks.All(t => t.remaining <= 0))
     {
-        if (destroyTasks.All(t => t.remaining <= 0))
+        Debug.Log("Level tamamlandı");
+
+        // ✅ Kalan hamleleri puana çevir
+        var movesManager = FindFirstObjectByType<MovesManager>();
+        if (movesManager != null)
         {
-            Debug.Log("Level tamamlandı");
+            int remaining = movesManager.GetRemainingMoves();
+            int bonus = remaining * 50;
 
-            // ✅ Kalan hamleleri puana çevir
-            var movesManager = FindFirstObjectByType<MovesManager>();
-            if (movesManager != null)
-            {
-                int remaining = movesManager.GetRemainingMoves();
-                int bonus = remaining * 50;
+            ScoreManager.Instance.AddScore(bonus);
+            Debug.Log($"🎁 Bonus Skor Eklendi: {remaining} x 50 = {bonus}");
+        }
 
-                ScoreManager.Instance.AddScore(bonus);
-                Debug.Log($"🎁 Bonus Skor Eklendi: {remaining} x 20 = {bonus}");
-            }
+        // ⭐️ Victory Panel gösterimi
+        if (victoryPanel != null)
+        {
+            int starCount = destroyTasks.Count(t => t.remaining <= 0);
+            victoryPanel.ShowVictory(starCount);
+        }
+        else
+        {
+            Debug.LogError("VictoryPanel referansı Inspector'da atanmadı!");
         }
     }
+}
+
+
+
 }

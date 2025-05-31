@@ -34,7 +34,10 @@ public class MovesManager : MonoBehaviour
         UpdateMovesUI();
 
         if (remainingMoves == 0)
+        {
             Debug.Log("Hamle hakkı bitti");
+            
+        }
     }
 
     private void UpdateMovesUI()
