@@ -1,12 +1,13 @@
-//BalloonItem.cs
+using System.Collections;
+using System.Collections.Generic;   // HashSet veya List gerekirse
 using UnityEngine;
 
 public class BalloonItem : MonoBehaviour
 {
     private SwapManager swapManager;
     private HintManager hintManager;
+    private DropManager dropManager; // ─── DropManager referansı
 
-   
     public bool isFrozen = false;
     public int x;
     public int y;
@@ -20,8 +21,11 @@ public class BalloonItem : MonoBehaviour
 
         if (swapManager == null) Debug.LogError("SwapManager bulunamadı!");
         if (hintManager == null) Debug.LogError("HintManager bulunamadı!");
-    }
 
+        // ─── dropManager referansını alalım
+        dropManager = FindObjectOfType<DropManager>();
+        if (dropManager == null) Debug.LogError("DropManager bulunamadı!");
+    }
 
 #if UNITY_EDITOR
     private Vector3 touchStart, touchEnd;
@@ -37,7 +41,7 @@ public class BalloonItem : MonoBehaviour
     {
         if (isFrozen)
         {
-            Debug.Log($"🚫 Bu balon donmuş ve hareket ettirilemez: ({x},{y})");
+            Debug.Log($"🚫 Bu balon donuk ve hareket ettirilemez: ({x},{y})");
             return;
         }
 
@@ -82,12 +86,37 @@ public class BalloonItem : MonoBehaviour
     {
         float t = 0f;
         Vector3 start = transform.position;
+
+        // ─── 3.1: Animasyon başladı, DropManager.fallingItems'a ekle
+        if (dropManager != null)
+        {
+            dropManager.RegisterFalling(gameObject);
+        }
+        else
+        {
+            var dm = FindObjectOfType<DropManager>();
+            if (dm != null)
+                dm.RegisterFalling(gameObject);
+        }
+
         while (t < 1f)
         {
             t += Time.deltaTime * 10f;
             transform.position = Vector3.Lerp(start, target, t);
             yield return null;
         }
-       transform.position = new Vector3(target.x, target.y, 0f);
+        transform.position = new Vector3(target.x, target.y, 0f);
+
+        // ─── 3.2: Animasyon bitti, DropManager.fallingItems'dan çıkar
+        if (dropManager != null)
+        {
+            dropManager.UnregisterFalling(gameObject);
+        }
+        else
+        {
+            var dm = FindObjectOfType<DropManager>();
+            if (dm != null)
+                dm.UnregisterFalling(gameObject);
+        }
     }
 }

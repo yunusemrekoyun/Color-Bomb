@@ -1,10 +1,15 @@
-// BoardGenerator.cs
-using System.Collections;
+// ▶ 1) En üstteki using bölümü:
+using System.Collections;              // (Zaten vardı)
 using UnityEngine;
+using System.Collections.Generic;       // ── Ekle: HashSet için
 
 [RequireComponent(typeof(GameBoard), typeof(MatchManager))]
 public class BoardGenerator : MonoBehaviour
 {
+    // ▶ 2) Class başında, herhangi bir metoda girmeden önce:
+    //     Bu statik koleksiyon, başlangıçta kilitlenecek balonları saklayacak.
+    public static HashSet<GameObject> lockedItems = new HashSet<GameObject>();
+
     private GameBoard board;
     private MatchManager matchManager;
 
@@ -13,10 +18,12 @@ public class BoardGenerator : MonoBehaviour
         board = GetComponent<GameBoard>();
         matchManager = GetComponent<MatchManager>();
     }
+
     public void StartCheckBoardHasMoves()
     {
         StartCoroutine(CheckBoardHasMoves());
     }
+
     private void Start()
     {
         GenerateBoard();
@@ -27,17 +34,21 @@ public class BoardGenerator : MonoBehaviour
     public void GenerateBoard()
     {
         StartCoroutine(CheckBoardHasMoves());
+
         for (int x = 0; x < board.width; x++)
         {
             for (int y = 0; y < board.height; y++)
             {
                 if (board.blockedPositions.Exists(p => p.x == x && p.y == y)) continue;
 
-                Vector2 spawnPos = new Vector2(x * board.spacing + board.offsetX,
-                                                y * board.spacing + board.offsetY);
+                Vector2 spawnPos = new Vector2(
+                    x * board.spacing + board.offsetX,
+                    y * board.spacing + board.offsetY
+                );
+
                 if (board.itemBackgroundPrefab != null &&
-    !board.glassTiles.Exists(p => p.x == x && p.y == y) &&
-    !board.boxTiles.Exists(p => p.x == x && p.y == y))
+                    !board.glassTiles.Exists(p => p.x == x && p.y == y) &&
+                    !board.boxTiles.Exists(p => p.x == x && p.y == y))
                 {
                     var bg = Instantiate(board.itemBackgroundPrefab, spawnPos, Quaternion.identity, transform);
                     bg.transform.position = new Vector3(spawnPos.x, spawnPos.y, 1f);
@@ -52,13 +63,25 @@ public class BoardGenerator : MonoBehaviour
                     bi.x = x;
                     bi.y = y;
 
-                    //  E�er glass b�lgesindeyse kilitle
+                    // Eğer burada bir glass bölgesi varsa, o balonu başlangıçta donuk (kilitli) yap:
                     if (board.glassTiles.Exists(p => p.x == x && p.y == y))
                         bi.isFrozen = true;
                 }
-
             }
         }
+
+        // ▶ 3) Burası GenerateBoard() metodunun en sonunda eklenen kısım:
+        //     Oyun başladığında, glass/box içine doğrudan düşen (kilitli) balonları "lockedItems" setine ekle.
+        foreach (var pos in board.blockedPositions)
+        {
+            GameObject inner = board.allBalloons[pos.x, pos.y];
+            if (inner != null)
+            {
+                lockedItems.Add(inner);
+                Debug.Log($"🔒 Başlangıçta kilitlendi: ({pos.x},{pos.y}) → {inner.name}");
+            }
+        }
+        // ──────────────────────────────────────────────────────────────────────────────
     }
 
     private IEnumerator CheckBoardHasMoves()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BreakableBlockManager : MonoBehaviour
 {
-
+    public static event System.Action<Vector2Int> OnBlockReleased;
 
     [Header("Damaged Sprites")]
     public Sprite damagedGlassSprite;
@@ -97,8 +97,16 @@ public class BreakableBlockManager : MonoBehaviour
             var script = balloon.GetComponent<BalloonItem>();
             if (script != null)
             {
+                // 1) Balonu donukluktan çıkar
                 script.isFrozen = false;
+
+                // 2) “lockedItems” setinden sil
+                BoardGenerator.lockedItems.Remove(balloon);
+
                 Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
+
+                // 3) Event’i tetikle (DropManager bunu dinliyor)
+                OnBlockReleased?.Invoke(pos);
             }
         }
     }
