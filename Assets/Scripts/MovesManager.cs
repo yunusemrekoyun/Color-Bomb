@@ -36,7 +36,7 @@ public class MovesManager : MonoBehaviour
         if (remainingMoves == 0)
         {
             Debug.Log("Hamle hakkı bitti");
-            FindFirstObjectByType<VictoryPanelController>().ShowVictory();
+            
         }
     }
 

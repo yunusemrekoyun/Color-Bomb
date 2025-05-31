@@ -127,7 +127,7 @@ TextureImporter:
         width: 288
         height: 302
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -149,7 +149,7 @@ TextureImporter:
         width: 349
         height: 343
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -171,7 +171,7 @@ TextureImporter:
         width: 288
         height: 302
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -184,11 +184,55 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: StarsBase_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 927
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f55089370e3dd684ba9f3ddf4deed5cf
+      internalID: -56541992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StarsBase_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 927
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba9add75d025d7d4793fdc9ce8dbe190
+      internalID: 497348935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f6d31f2435dc8c044a9c0a142a0884fe
     internalID: 0
     vertices: []
     indices: 
@@ -197,7 +241,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      StarsBase_0: 8793459285833208317
+      StarsBase_1: 7111424381502533728
+      StarsBase_2: -1912214390952443651
+      StarsBase_3: -56541992
+      StarsBase_4: 497348935
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

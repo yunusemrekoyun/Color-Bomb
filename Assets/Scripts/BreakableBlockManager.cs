@@ -102,8 +102,7 @@ public class BreakableBlockManager : MonoBehaviour
         }
     }
 
-    // ⭐️ Yeni satır – hemen yeniden düşür
-    GetComponent<DropManager>()?.DropBalloons();
+ 
 }
     private void UpdateGlassSprite(Vector2Int pos)
     {
