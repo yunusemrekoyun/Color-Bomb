@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Collections; // ✅ coroutine'ler için gerekli
 [Serializable]
 public class DestroyTask
 {
@@ -17,6 +17,8 @@ public class DestroyTask
 
 public class TaskManager : MonoBehaviour
 {
+    public VictoryPanelController victoryPanelController;
+
     [Header("◆ Balloon Destroy Tasks ◆")]
     [Tooltip("Aynı prefab‑ı birden fazla eklemeyin")]
     public List<DestroyTask> destroyTasks = new List<DestroyTask>(3);
@@ -83,16 +85,39 @@ public class TaskManager : MonoBehaviour
         {
             Debug.Log("Level tamamlandı");
 
-            // ✅ Kalan hamleleri puana çevir
             var movesManager = FindFirstObjectByType<MovesManager>();
             if (movesManager != null)
             {
                 int remaining = movesManager.GetRemainingMoves();
                 int bonus = remaining * 50;
-
                 ScoreManager.Instance.AddScore(bonus);
-                Debug.Log($"🎁 Bonus Skor Eklendi: {remaining} x 20 = {bonus}");
+                Debug.Log($"🎁 Bonus Skor Eklendi: {remaining} x 50 = {bonus}");
             }
+
+            // Artık fillbar dolduktan sonra victory panel gösterilecek
+            StartCoroutine(ShowVictoryDelayed());
         }
+    }
+
+    private IEnumerator ShowVictoryDelayed()
+    {
+        // ✅ fillAmount'ın güncellenmesini bekle
+        yield return new WaitForSeconds(0.5f);
+
+        int earnedStars = CalculateStarCount();
+        Debug.Log("🎖️ Yıldız sayısı hesaplandı: " + earnedStars);
+        victoryPanelController.ShowVictory(earnedStars);
+    }
+    private int CalculateStarCount()
+    {
+        var bar = FindFirstObjectByType<ScoreFillBar>();
+        if (bar == null) return 0;
+
+        float fill = bar.GetCurrentFill(); // Aşağıda göstereceğim
+
+        if (fill >= 1f) return 3;
+        else if (fill >= 0.66f) return 2;
+        else if (fill >= 0.33f) return 1;
+        else return 0;
     }
 }

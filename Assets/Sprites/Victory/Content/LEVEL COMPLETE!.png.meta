@@ -1,0 +1,520 @@
+fileFormatVersion: 2
+guid: e8199c5164b6042e88a105cb1cd7aa65
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -9199545492959590992
+    second: LEVEL COMPLETE!_0
+  - first:
+      213: 1787152029587028251
+    second: LEVEL COMPLETE!_1
+  - first:
+      213: 5955464515059700471
+    second: LEVEL COMPLETE!_2
+  - first:
+      213: 719576190127400252
+    second: LEVEL COMPLETE!_3
+  - first:
+      213: 3313151634439027064
+    second: LEVEL COMPLETE!_4
+  - first:
+      213: -2129926634815193979
+    second: LEVEL COMPLETE!_5
+  - first:
+      213: 2628938615940956116
+    second: LEVEL COMPLETE!_6
+  - first:
+      213: 3574960673985266451
+    second: LEVEL COMPLETE!_7
+  - first:
+      213: 1687673217623193006
+    second: LEVEL COMPLETE!_8
+  - first:
+      213: -7042433976979931149
+    second: LEVEL COMPLETE!_9
+  - first:
+      213: -3141335794484898843
+    second: LEVEL COMPLETE!_10
+  - first:
+      213: 9020311242589326310
+    second: LEVEL COMPLETE!_11
+  - first:
+      213: -6274592528830020405
+    second: LEVEL COMPLETE!_12
+  - first:
+      213: -9027554687226681274
+    second: LEVEL COMPLETE!_13
+  - first:
+      213: 2979994686806957637
+    second: LEVEL COMPLETE!_14
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_0
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 77
+        width: 33
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b5091d8d16a45080800000000000000
+      internalID: -9199545492959590992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_1
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 77
+        width: 36
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b19372b5d4d3dc810800000000000000
+      internalID: 1787152029587028251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_2
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 77
+        width: 38
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f2d39c4c6f06a250800000000000000
+      internalID: 5955464515059700471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_3
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 77
+        width: 36
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c356f518bb27cf900800000000000000
+      internalID: 719576190127400252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_4
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 78
+        width: 22
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8793eb19bddaafd20800000000000000
+      internalID: 3313151634439027064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 14
+        width: 41
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58c723ea20bf072e0800000000000000
+      internalID: -2129926634815193979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_6
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 14
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dfb7731ebddb7420800000000000000
+      internalID: 2628938615940956116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_7
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 15
+        width: 62
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31302e2cacfcc9130800000000000000
+      internalID: 3574960673985266451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_8
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 0
+        width: 41
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea5fe5989d1db6710800000000000000
+      internalID: 1687673217623193006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_9
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 15
+        width: 22
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ff38ff3c9f344e90800000000000000
+      internalID: -7042433976979931149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_10
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 14
+        width: 36
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e312890dbbb764d0800000000000000
+      internalID: -3141335794484898843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_11
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 15
+        width: 37
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ebcff198459e2d70800000000000000
+      internalID: 9020311242589326310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_12
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 14
+        width: 36
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc444c8d65b2ce8a0800000000000000
+      internalID: -6274592528830020405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_13
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 33
+        width: 18
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 648e07d87dea7b280800000000000000
+      internalID: -9027554687226681274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LEVEL COMPLETE!_14
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 14
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54e1ea301611b5920800000000000000
+      internalID: 2979994686806957637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      LEVEL COMPLETE!_0: -9199545492959590992
+      LEVEL COMPLETE!_1: 1787152029587028251
+      LEVEL COMPLETE!_10: -3141335794484898843
+      LEVEL COMPLETE!_11: 9020311242589326310
+      LEVEL COMPLETE!_12: -6274592528830020405
+      LEVEL COMPLETE!_13: -9027554687226681274
+      LEVEL COMPLETE!_14: 2979994686806957637
+      LEVEL COMPLETE!_2: 5955464515059700471
+      LEVEL COMPLETE!_3: 719576190127400252
+      LEVEL COMPLETE!_4: 3313151634439027064
+      LEVEL COMPLETE!_5: -2129926634815193979
+      LEVEL COMPLETE!_6: 2628938615940956116
+      LEVEL COMPLETE!_7: 3574960673985266451
+      LEVEL COMPLETE!_8: 1687673217623193006
+      LEVEL COMPLETE!_9: -7042433976979931149
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

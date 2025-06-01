@@ -88,4 +88,8 @@ public class ScoreFillBar : MonoBehaviour
 
         starImage.transform.localScale = originalScale;
     }
+    public float GetCurrentFill()
+{
+    return currentFill;
+}
 }
