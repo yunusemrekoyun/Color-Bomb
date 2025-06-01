@@ -15,14 +15,17 @@ public class GameBoard : MonoBehaviour
     [Header("▶ Hamle Ayarları")]
     [Tooltip("Oyuncuya bu sahnede verilecek toplam hamle sayısı")]
     public int maxMoves = 20;
+
     [Header("Breakable Tile Prefabs")]
     public GameObject glassPrefab;
     public GameObject boxPrefab;
 
     [Header("Normal Balloon Prefabs")]
     public GameObject[] balloonPrefabs;
+
     [Header("▶ Skor Ayarları")]
-    public int scoreMultiplier = 10; // Örn: her eşleşme başına 10 puan
+    public int scoreMultiplier = 10;
+
     [Header("Empty Positions")]
     public List<BlockedPosition> blockedPositions = new List<BlockedPosition>();
 
@@ -84,7 +87,7 @@ public class GameBoard : MonoBehaviour
             glass.name = $"Glass_{g.x}_{g.y}";
             breakableManager.glassHealthDict[gridPos] = 2;
 
-            if (allBalloons[g.x, g.y] == null)
+            if (IsInsideBounds(g.x, g.y) && allBalloons[g.x, g.y] == null)
             {
                 int randIndex = Random.Range(0, balloonPrefabs.Length);
                 var balloon = Instantiate(balloonPrefabs[randIndex], pos, Quaternion.identity, transform);
@@ -115,7 +118,7 @@ public class GameBoard : MonoBehaviour
             box.name = $"Box_{b.x}_{b.y}";
             breakableManager.boxHealthDict[gridPos] = 2;
 
-            if (allBalloons[b.x, b.y] != null)
+            if (IsInsideBounds(b.x, b.y) && allBalloons[b.x, b.y] != null)
             {
                 var balloon = allBalloons[b.x, b.y].GetComponent<BalloonItem>();
                 if (balloon != null)
@@ -140,8 +143,14 @@ public class GameBoard : MonoBehaviour
     {
         foreach (var item in matchedItems)
         {
+            if (item == null) continue;
             taskManager.OnItemDestroyed(item);
             Destroy(item);
         }
+    }
+
+    private bool IsInsideBounds(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 }

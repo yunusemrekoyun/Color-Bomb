@@ -1,130 +1,141 @@
+// Refactored BreakableBlockManager.cs
+// - Kod düzenlendi ve okunabilirlik artırıldı
+// - DamageRandomBlocks() metodu eklendi
+
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BreakableBlockManager : MonoBehaviour
 {
-
-
     [Header("Damaged Sprites")]
     public Sprite damagedGlassSprite;
     public Sprite damagedBoxSprite;
 
-
     private TaskManager taskManager;
     private GameBoard board;
 
-
-    public Dictionary<Vector2Int, int> glassHealthDict = new Dictionary<Vector2Int, int>();
-    public Dictionary<Vector2Int, int> boxHealthDict = new Dictionary<Vector2Int, int>();
-
+    public Dictionary<Vector2Int, int> glassHealthDict = new();
+    public Dictionary<Vector2Int, int> boxHealthDict = new();
 
     private void Awake()
     {
         board = GetComponent<GameBoard>();
-        taskManager = GetComponent<TaskManager>(); // 👈 bunu ekle
+        taskManager = GetComponent<TaskManager>();
 
         if (board == null)
             Debug.LogError("GameBoard bileşeni bulunamadı!");
     }
+
     public bool TryDamageBlock(Vector2Int pos)
     {
-        // Eğer bu pozisyonda cam varsa
         if (glassHealthDict.ContainsKey(pos))
         {
-            glassHealthDict[pos]--;
-
-            int newHealth = glassHealthDict[pos];
-
-            if (newHealth == 1)
-                UpdateGlassSprite(pos);
-
-            if (newHealth <= 0)
-            {
-                var glassObj = GameObject.Find($"Glass_{pos.x}_{pos.y}");
-                if (glassObj != null)
-                {
-                    var sr = glassObj.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                        sr.sprite = null;
-
-                    taskManager?.OnItemDestroyed(glassObj); // ✅ sayaç bildirimi
-
-                    Destroy(glassObj);
-                }
-
-                glassHealthDict.Remove(pos);
-                ReleaseBalloon(pos);
-            }
-
-
-            return true;
+            return DamageGlass(pos);
         }
-
-        // Eğer bu pozisyonda box varsa
-        if (boxHealthDict.ContainsKey(pos))
+        else if (boxHealthDict.ContainsKey(pos))
         {
-            boxHealthDict[pos]--;
-            int newHealth = boxHealthDict[pos];
-
-            if (newHealth == 1)
-                UpdateBoxSprite(pos);
-            if (newHealth <= 0)
-            {
-                var boxObj = GameObject.Find($"Box_{pos.x}_{pos.y}");
-                if (boxObj != null)
-                {
-                    taskManager?.OnItemDestroyed(boxObj); // ✅ sayaç bildirimi
-                    Destroy(boxObj);
-                }
-
-                boxHealthDict.Remove(pos);
-                board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y);
-                ReleaseBalloon(pos);
-            }
-
-
-            return true;
+            return DamageBox(pos);
         }
-
         return false;
     }
 
- private void ReleaseBalloon(Vector2Int pos)
-{
-    var balloon = board.allBalloons[pos.x, pos.y];
-    if (balloon != null)
+    private bool DamageGlass(Vector2Int pos)
     {
-        var script = balloon.GetComponent<BalloonItem>();
-        if (script != null)
+        glassHealthDict[pos]--;
+        int newHealth = glassHealthDict[pos];
+
+        if (newHealth == 1)
+            UpdateGlassSprite(pos);
+
+        if (newHealth <= 0)
         {
-            script.isFrozen = false;
-            Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
+            var glassObj = GameObject.Find($"Glass_{pos.x}_{pos.y}");
+            if (glassObj != null)
+            {
+                var sr = glassObj.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                    sr.sprite = null; taskManager?.OnItemDestroyed(glassObj);
+                Destroy(glassObj);
+            }
+
+            glassHealthDict.Remove(pos);
+            ReleaseBalloon(pos);
         }
+        return true;
     }
 
-    // ⭐️ Yeni satır – hemen yeniden düşür
-    GetComponent<DropManager>()?.DropBalloons();
-}
+    private bool DamageBox(Vector2Int pos)
+    {
+        boxHealthDict[pos]--;
+        int newHealth = boxHealthDict[pos];
+
+        if (newHealth == 1)
+            UpdateBoxSprite(pos);
+
+        if (newHealth <= 0)
+        {
+            var boxObj = GameObject.Find($"Box_{pos.x}_{pos.y}");
+            if (boxObj != null)
+            {
+                taskManager?.OnItemDestroyed(boxObj);
+                Destroy(boxObj);
+            }
+
+            boxHealthDict.Remove(pos);
+            board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y); ReleaseBalloon(pos);
+        }
+        return true;
+    }
+
+    private void ReleaseBalloon(Vector2Int pos)
+    {
+        var balloon = board.allBalloons[pos.x, pos.y];
+        if (balloon != null)
+        {
+            var script = balloon.GetComponent<BalloonItem>();
+            if (script != null)
+            {
+                script.isFrozen = false;
+                Debug.Log($"🔓 Balon serbest bırakıldı: {pos}");
+            }
+        }
+
+        GetComponent<DropManager>()?.DropBalloons();
+    }
+
     private void UpdateGlassSprite(Vector2Int pos)
     {
         var glass = GameObject.Find($"Glass_{pos.x}_{pos.y}");
-        if (glass != null && damagedGlassSprite != null)
-        {
-            var sr = glass.GetComponent<SpriteRenderer>();
-            if (sr != null)
-                sr.sprite = damagedGlassSprite;
-        }
+        var sr = glass?.GetComponent<SpriteRenderer>();
+        if (sr != null)
+            sr.sprite = damagedGlassSprite;
     }
 
     private void UpdateBoxSprite(Vector2Int pos)
     {
         var box = GameObject.Find($"Box_{pos.x}_{pos.y}");
-        if (box != null && damagedBoxSprite != null)
-        {
-            var sr = box.GetComponent<SpriteRenderer>();
-            if (sr != null)
-                sr.sprite = damagedBoxSprite;
-        }
+        var sr = box?.GetComponent<SpriteRenderer>();
+        if (sr != null)
+            sr.sprite = damagedBoxSprite;
     }
 
+    // ✅ SwapManager için gerekli fonksiyon
+    public void DamageRandomBlocks(int count)
+    {
+        List<Vector2Int> allBlocks = new();
+
+        foreach (var entry in glassHealthDict)
+            if (entry.Value > 0) allBlocks.Add(entry.Key);
+
+        foreach (var entry in boxHealthDict)
+            if (entry.Value > 0) allBlocks.Add(entry.Key);
+
+        for (int i = 0; i < count && allBlocks.Count > 0; i++)
+        {
+            int index = Random.Range(0, allBlocks.Count);
+            Vector2Int pos = allBlocks[index];
+            TryDamageBlock(pos);
+            allBlocks.RemoveAt(index);
+        }
+    }
 }

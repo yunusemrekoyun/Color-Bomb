@@ -8,18 +8,11 @@ public class SpecialItemSpawner : MonoBehaviour
 
     private void Awake() => board = GetComponent<GameBoard>();
 
-    public void SpawnSpecial(GameObject prefab, int x, int y)
+   public void SpawnSpecial(GameObject prefab, int x, int y)
 {
-    if (board.allBalloons[x, y] != null)
-{
-    Destroy(board.allBalloons[x, y]); // Çakışma varsa eskiyi sil
-}
     if (prefab == null) return;
 
-    Vector3 worldPos = board.CellToWorld(x, y);
-    worldPos.z = 0f; // Balonlar gibi davranacak
-
-    // 🔥 ESKİ BALONU YOK ET (şart!)
+    // 🔥 Mevcut varsa yok et
     var existing = board.allBalloons[x, y];
     if (existing != null)
     {
@@ -27,7 +20,9 @@ public class SpecialItemSpawner : MonoBehaviour
         board.allBalloons[x, y] = null;
     }
 
-    // ✅ SPECIAL ITEM SPAWN
+    Vector3 worldPos = board.CellToWorld(x, y);
+    worldPos.z = 0f;
+
     var special = Instantiate(prefab, worldPos, Quaternion.identity, transform);
     board.allBalloons[x, y] = special;
 
@@ -39,8 +34,8 @@ public class SpecialItemSpawner : MonoBehaviour
     var sr = special.GetComponent<SpriteRenderer>();
     if (sr != null)
     {
-        sr.sortingLayerName = "SpecialItem"; // Unity’de tanımlı olmalı
-        sr.sortingOrder = 10; // Balonların üstünde kalmalı
+        sr.sortingLayerName = "SpecialItem"; // UI'de üstte kalsın
+        sr.sortingOrder = 10;
     }
 }
 }

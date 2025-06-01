@@ -94,16 +94,18 @@ public class MergeManager : MonoBehaviour
             if (g != null) Destroy(g);
 
         // ➤ Special item spawn
-       if (specialPrefab != null)
-{
-    // Pozisyonu hemen kilitle → drop engelleme
-    if (board.allBalloons[spawnX, spawnY] != null)
-        Destroy(board.allBalloons[spawnX, spawnY]);
+        if (specialPrefab != null)
+        {
+            // Pozisyonu hemen kilitle → drop engelleme
+            if (board.allBalloons[spawnX, spawnY] != null)
+                Destroy(board.allBalloons[spawnX, spawnY]);
 
-    board.allBalloons[spawnX, spawnY] = new GameObject("Special_Placeholder");
+            // Placeholder yerine sadece 'null'a çekip doğrudan spawn çağırmak yeterli olabilir.
+            board.allBalloons[spawnX, spawnY] = null;
+            spawner.SpawnSpecial(specialPrefab, spawnX, spawnY);
 
-    spawner.SpawnSpecial(specialPrefab, spawnX, spawnY);
-}
+            spawner.SpawnSpecial(specialPrefab, spawnX, spawnY);
+        }
 
         yield return new WaitForSeconds(0.1f);
 

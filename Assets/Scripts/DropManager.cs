@@ -21,44 +21,34 @@ public class DropManager : MonoBehaviour
 
             for (int y = 0; y < board.height; y++)
             {
-                if (board.blockedPositions.Exists(p => p.x == x && p.y == y))
-                    continue;
+                if (IsBlockedOrBreakable(x, y)) continue;
 
                 var current = board.allBalloons[x, y];
-                var balloon = current != null ? current.GetComponent<BalloonItem>() : null;
+                var balloon = current?.GetComponent<BalloonItem>();
 
-                // 🧱 Eğer cam varsa veya kutu varsa ve hâlâ sahnedeyse, bu item yerinde sabit kalmalı
-                Vector2Int pos = new Vector2Int(x, y);
-                if (board.breakableManager.glassHealthDict.ContainsKey(pos) ||
-                    board.breakableManager.boxHealthDict.ContainsKey(pos))
-                    continue;
-
-                // ❄️ Eğer bu balon donmuşsa, hareket ettirme
                 if (balloon != null && balloon.isFrozen)
                     continue;
 
-                if (board.allBalloons[x, y] == null)
+                if (current == null)
                 {
                     if (emptyY < 0) emptyY = y;
                 }
                 else if (emptyY >= 0)
                 {
-                    var obj = board.allBalloons[x, y];
-                    board.allBalloons[x, emptyY] = obj;
+                    board.allBalloons[x, emptyY] = current;
                     board.allBalloons[x, y] = null;
 
-                    var bi = obj.GetComponent<BalloonItem>();
-                    Vector3 dest = new Vector3(x * board.spacing + board.offsetX,
-                                               emptyY * board.spacing + board.offsetY, 0);
+                    var dest = CellToWorld(x, emptyY);
 
-                    if (bi != null)
+                    if (balloon != null)
                     {
-                        bi.x = x; bi.y = emptyY;
-                        bi.MoveTo(dest);
+                        balloon.x = x;
+                        balloon.y = emptyY;
+                        balloon.MoveTo(dest);
                     }
                     else
                     {
-                        obj.transform.position = dest;
+                        current.transform.position = dest;
                     }
 
                     emptyY++;
@@ -67,7 +57,7 @@ public class DropManager : MonoBehaviour
                 }
             }
 
-            // 🧼 Spawn kısmı — cam varsa veya kutu varsa ya da frozen ise spawn etme
+            // Yeni balon spawn kısmı
             for (int y = board.height - 1; y >= 0; y--)
             {
                 var pos = new Vector2Int(x, y);
@@ -87,9 +77,12 @@ public class DropManager : MonoBehaviour
                     board.allBalloons[x, y] = nb;
 
                     var newBi = nb.GetComponent<BalloonItem>();
-                    newBi.x = x; newBi.y = y;
-                    newBi.MoveTo(new Vector3(x * board.spacing + board.offsetX,
-                                              y * board.spacing + board.offsetY, 0));
+                    if (newBi != null)
+                    {
+                        newBi.x = x;
+                        newBi.y = y;
+                        newBi.MoveTo(CellToWorld(x, y));
+                    }
                 }
             }
         }
@@ -97,9 +90,23 @@ public class DropManager : MonoBehaviour
         StartCoroutine(ClearAfterFallWithDelay());
     }
 
+    private Vector3 CellToWorld(int x, int y)
+    {
+        return new Vector3(x * board.spacing + board.offsetX, y * board.spacing + board.offsetY, 0);
+    }
+
+    private bool IsBlockedOrBreakable(int x, int y)
+    {
+        var pos = new Vector2Int(x, y);
+        return board.blockedPositions.Exists(p => p.x == x && p.y == y) ||
+               board.breakableManager.glassHealthDict.ContainsKey(pos) ||
+               board.breakableManager.boxHealthDict.ContainsKey(pos);
+    }
+
     private IEnumerator ClearAfterFall()
     {
         yield return new WaitForSeconds(0.4f);
+
         if (matchManager.CheckAndClearMatches())
             yield return new WaitForSeconds(0.2f);
         else
@@ -108,12 +115,12 @@ public class DropManager : MonoBehaviour
 
     private IEnumerator ClearAfterFallWithDelay()
     {
-        yield return new WaitForSeconds(0.6f); // 🕓 Animasyonların inmesini bekle
+        yield return new WaitForSeconds(0.6f);
 
         while (AreBalloonsMoving())
             yield return null;
 
-        if (GetComponent<MatchManager>().CheckAndClearMatches())
+        if (matchManager.CheckAndClearMatches())
             yield return new WaitForSeconds(0.2f);
         else
             GetComponent<BoardGenerator>().StartCheckBoardHasMoves();
@@ -124,6 +131,7 @@ public class DropManager : MonoBehaviour
         foreach (var b in board.allBalloons)
         {
             if (b == null) continue;
+
             var rb = b.GetComponent<Rigidbody2D>();
             if (rb != null && rb.linearVelocity.magnitude > 0.01f)
                 return true;

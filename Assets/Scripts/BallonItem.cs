@@ -1,4 +1,3 @@
-//BalloonItem.cs
 using UnityEngine;
 
 public class BalloonItem : MonoBehaviour
@@ -6,7 +5,6 @@ public class BalloonItem : MonoBehaviour
     private SwapManager swapManager;
     private HintManager hintManager;
 
-   
     public bool isFrozen = false;
     public int x;
     public int y;
@@ -21,7 +19,6 @@ public class BalloonItem : MonoBehaviour
         if (swapManager == null) Debug.LogError("SwapManager bulunamadı!");
         if (hintManager == null) Debug.LogError("HintManager bulunamadı!");
     }
-
 
 #if UNITY_EDITOR
     private Vector3 touchStart, touchEnd;
@@ -54,17 +51,16 @@ public class BalloonItem : MonoBehaviour
         int newX = x, newY = y;
         if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
         {
-            if (delta.x > 0) newX = x + 1;
-            else newX = x - 1;
+            newX += delta.x > 0 ? 1 : -1;
         }
         else
         {
-            if (delta.y > 0) newY = y + 1;
-            else newY = y - 1;
+            newY += delta.y > 0 ? 1 : -1;
         }
 
-        // sınırlar içinde mi?
         var board = swapManager.GetComponent<GameBoard>();
+        if (board == null) return;
+
         if (newX < 0 || newX >= board.width || newY < 0 || newY >= board.height)
             return;
 
@@ -74,8 +70,8 @@ public class BalloonItem : MonoBehaviour
 
     public void MoveTo(Vector3 target)
     {
-        StopAllCoroutines();
-        StartCoroutine(MoveRoutine(target));
+        StopCoroutine("MoveRoutine"); // sadece kendi coroutine'ini durdur
+        StartCoroutine("MoveRoutine", target);
     }
 
     private System.Collections.IEnumerator MoveRoutine(Vector3 target)
@@ -88,6 +84,6 @@ public class BalloonItem : MonoBehaviour
             transform.position = Vector3.Lerp(start, target, t);
             yield return null;
         }
-       transform.position = new Vector3(target.x, target.y, 0f);
+        transform.position = new Vector3(target.x, target.y, 0f);
     }
 }
