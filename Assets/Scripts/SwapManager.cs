@@ -149,7 +149,6 @@ public class SwapManager : MonoBehaviour
         yield return TriggerSpecial(item, x, y, targetTag);
     }
 
-    // ✅ TriggerSpecial() refactor edilmiş hali
     public IEnumerator TriggerSpecial(SpecialItem item, int x, int y, string targetTag = null)
     {
         switch (item.state)
@@ -176,8 +175,7 @@ public class SwapManager : MonoBehaviour
         GetComponent<DropManager>().DropBalloons();
     }
 
-    // 🎯 Özel tetikleme parçaları
-    private IEnumerator TriggerHorizontal(int y, int yRow, SpecialItem item)
+    private IEnumerator TriggerHorizontal(int x, int yRow, SpecialItem item)
     {
         for (int i = 0; i < board.width; i++)
         {
@@ -219,32 +217,39 @@ public class SwapManager : MonoBehaviour
         yield return null;
     }
 
-    private void TryDestroyAt(int x, int y, SpecialItem currentItem = null)
+ private void TryDestroyAt(int x, int y, SpecialItem currentItem = null)
+{
+    if (x < 0 || y < 0 || x >= board.width || y >= board.height) return;
+
+    // ➤ Eğer burada cam veya kutu varsa, sadece hasar ver ve balona dokunma
+    if (board.breakableManager.HasBlock(x, y))
     {
-        if (x < 0 || y < 0 || x >= board.width || y >= board.height) return;
-
-        var obj = board.allBalloons[x, y];
-        if (obj == null) return;
-
-        var special = obj.GetComponent<SpecialItem>();
-        if (special != null && special != currentItem)
-        {
-            board.allBalloons[x, y] = null;
-            StartCoroutine(TriggerSpecial(special, x, y));
-        }
-
-        if (focusEffectPrefab != null)
-        {
-            GameObject fx = Instantiate(focusEffectPrefab, obj.transform.position, Quaternion.identity);
-            Destroy(fx, 1f);
-        }
-        if (explosionEffectPrefab != null)
-        {
-            GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
-            Destroy(fx, 1f);
-        }
-
-        board.allBalloons[x, y] = null;
-        Destroy(obj);
+        board.breakableManager.TryDamageBlock(new Vector2Int(x, y));
+        return;
     }
+
+    var obj = board.allBalloons[x, y];
+    if (obj == null) return;
+
+    var special = obj.GetComponent<SpecialItem>();
+    if (special != null && special != currentItem)
+    {
+        board.allBalloons[x, y] = null;
+        StartCoroutine(TriggerSpecial(special, x, y));
+    }
+
+    if (focusEffectPrefab != null)
+    {
+        GameObject fx = Instantiate(focusEffectPrefab, obj.transform.position, Quaternion.identity);
+        Destroy(fx, 1f);
+    }
+    if (explosionEffectPrefab != null)
+    {
+        GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
+        Destroy(fx, 1f);
+    }
+
+    board.allBalloons[x, y] = null;
+    Destroy(obj);
+}
 }

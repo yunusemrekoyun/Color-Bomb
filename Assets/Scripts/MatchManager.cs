@@ -7,7 +7,7 @@ public class MatchManager : MonoBehaviour
 {
     public enum MatchState { None, Horizontal5, Vertical5, Square4, Horizontal4, Vertical4, Horizontal3, Vertical3, Unknown }
 
-    private MatchState currentState = MatchState.None;
+  //  private MatchState currentState = MatchState.None;
     private GameBoard board;
     private MergeManager mergeManager;
     private TaskManager taskManager;

@@ -156,10 +156,16 @@ public static class SpecialComboManager
                 TryDestroy(board, tx, ty);
             }
     }
-
     private static void TryDestroy(GameBoard board, int x, int y)
     {
         if (x < 0 || x >= board.width || y < 0 || y >= board.height) return;
+
+        // Eğer kutu veya cam varsa sadece hasar ver, balona dokunma
+        if (board.breakableManager != null && board.breakableManager.HasBlock(x, y))
+        {
+            board.breakableManager.TryDamageBlock(new Vector2Int(x, y));
+            return;
+        }
 
         var b = board.allBalloons[x, y];
         if (b != null)

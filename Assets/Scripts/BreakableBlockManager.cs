@@ -140,4 +140,9 @@ public class BreakableBlockManager : MonoBehaviour
             allBlocks.RemoveAt(index);
         }
     }
+    public bool HasBlock(int x, int y)
+{
+    Vector2Int pos = new Vector2Int(x, y);
+    return glassHealthDict.ContainsKey(pos) || boxHealthDict.ContainsKey(pos);
+}
 }
