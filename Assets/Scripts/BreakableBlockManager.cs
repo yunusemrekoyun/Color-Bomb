@@ -53,8 +53,9 @@ public class BreakableBlockManager : MonoBehaviour
             if (glassObj != null)
             {
                 var sr = glassObj.GetComponent<SpriteRenderer>();
+                taskManager?.OnItemDestroyed(glassObj);
                 if (sr != null)
-                    sr.sprite = null; taskManager?.OnItemDestroyed(glassObj);
+                    sr.sprite = null;
                 Destroy(glassObj);
             }
 
@@ -82,7 +83,8 @@ public class BreakableBlockManager : MonoBehaviour
             }
 
             boxHealthDict.Remove(pos);
-            board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y); ReleaseBalloon(pos);
+            board.blockedPositions.RemoveAll(p => p.x == pos.x && p.y == pos.y);
+            ReleaseBalloon(pos);
         }
         return true;
     }

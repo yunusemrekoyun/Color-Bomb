@@ -146,26 +146,48 @@ public class MatchManager : MonoBehaviour
     {
         var result = new List<GameObject>();
         var center = board.allBalloons[x, y];
-        if (center == null) return result;
+
+        // 🛡️ Güvenli kontrol
+        if (center == null || !center) return result;
 
         string tag = center.tag;
+
         List<GameObject> horiz = new List<GameObject> { center };
-        for (int i = x - 1; i >= 0 && board.allBalloons[i, y]?.tag == tag; i--)
-            horiz.Add(board.allBalloons[i, y]);
-        for (int i = x + 1; i < board.width && board.allBalloons[i, y]?.tag == tag; i++)
-            horiz.Add(board.allBalloons[i, y]);
+        for (int i = x - 1; i >= 0; i--)
+        {
+            var b = board.allBalloons[i, y];
+            if (b == null || !b || b.tag != tag) break;
+            horiz.Add(b);
+        }
+
+        for (int i = x + 1; i < board.width; i++)
+        {
+            var b = board.allBalloons[i, y];
+            if (b == null || !b || b.tag != tag) break;
+            horiz.Add(b);
+        }
+
         if (horiz.Count >= 3)
             result.AddRange(horiz);
 
         List<GameObject> vert = new List<GameObject> { center };
-        for (int i = y - 1; i >= 0 && board.allBalloons[x, i]?.tag == tag; i--)
-            vert.Add(board.allBalloons[x, i]);
-        for (int i = y + 1; i < board.height && board.allBalloons[x, i]?.tag == tag; i++)
-            vert.Add(board.allBalloons[x, i]);
+        for (int i = y - 1; i >= 0; i--)
+        {
+            var b = board.allBalloons[x, i];
+            if (b == null || !b || b.tag != tag) break;
+            vert.Add(b);
+        }
+
+        for (int i = y + 1; i < board.height; i++)
+        {
+            var b = board.allBalloons[x, i];
+            if (b == null || !b || b.tag != tag) break;
+            vert.Add(b);
+        }
+
         if (vert.Count >= 3)
             result.AddRange(vert);
 
-        // Eğer yatay ve dikey eşleşme yoksa boş liste dön
         if (result.Count < 3)
             result.Clear();
 
@@ -276,41 +298,62 @@ public class MatchManager : MonoBehaviour
     private void TryMatchLine(int startX, int startY, int dx, int dy, int len,
                           GameObject specialPrefab,
                           System.Action<List<GameObject>, int, int, GameObject> onMatch)
+{
+    var first = board.allBalloons[startX, startY];
+    if (first == null || !first) return;
+    string tag = first.tag;
+
+    for (int i = 1; i < len; i++)
     {
-        var first = board.allBalloons[startX, startY];
-        if (first == null) return;
-        string tag = first.tag;
-
-        for (int i = 1; i < len; i++)
-        {
-            var other = board.allBalloons[startX + dx * i, startY + dy * i];
-            if (other == null || other.tag != tag)
-                return;
-        }
-
-        var match = new List<GameObject>();
-        for (int i = 0; i < len; i++)
-            match.Add(board.allBalloons[startX + dx * i, startY + dy * i]);
-
-        int spawnX = startX + dx * ((len - 1) / 2);
-        int spawnY = startY + dy * ((len - 1) / 2);
-        onMatch?.Invoke(match, spawnX, spawnY, specialPrefab);
+        var other = board.allBalloons[startX + dx * i, startY + dy * i];
+        if (other == null || !other || other.tag != tag)
+            return;
     }
+
+    var match = new List<GameObject>();
+    for (int i = 0; i < len; i++)
+        match.Add(board.allBalloons[startX + dx * i, startY + dy * i]);
+
+    int spawnX = startX + dx * ((len - 1) / 2);
+    int spawnY = startY + dy * ((len - 1) / 2);
+    onMatch?.Invoke(match, spawnX, spawnY, specialPrefab);
+}
 
     private bool CheckMatchExists(int x, int y)
+{
+    var center = board.allBalloons[x, y];
+    if (center == null || !center) return false;
+    string tag = center.tag;
+
+    int count = 1;
+    for (int i = x - 1; i >= 0; i--)
     {
-        var center = board.allBalloons[x, y];
-        if (center == null) return false;
-        string tag = center.tag;
-
-        int count = 1;
-        for (int i = x - 1; i >= 0 && board.allBalloons[i, y]?.tag == tag; i--) count++;
-        for (int i = x + 1; i < board.width && board.allBalloons[i, y]?.tag == tag; i++) count++;
-        if (count >= 3) return true;
-
-        count = 1;
-        for (int i = y - 1; i >= 0 && board.allBalloons[x, i]?.tag == tag; i--) count++;
-        for (int i = y + 1; i < board.height && board.allBalloons[x, i]?.tag == tag; i++) count++;
-        return count >= 3;
+        var b = board.allBalloons[i, y];
+        if (b == null || !b || b.tag != tag) break;
+        count++;
     }
+    for (int i = x + 1; i < board.width; i++)
+    {
+        var b = board.allBalloons[i, y];
+        if (b == null || !b || b.tag != tag) break;
+        count++;
+    }
+    if (count >= 3) return true;
+
+    count = 1;
+    for (int i = y - 1; i >= 0; i--)
+    {
+        var b = board.allBalloons[x, i];
+        if (b == null || !b || b.tag != tag) break;
+        count++;
+    }
+    for (int i = y + 1; i < board.height; i++)
+    {
+        var b = board.allBalloons[x, i];
+        if (b == null || !b || b.tag != tag) break;
+        count++;
+    }
+
+    return count >= 3;
+}
 }

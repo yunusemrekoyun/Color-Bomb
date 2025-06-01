@@ -38,20 +38,21 @@ public class MergeManager : MonoBehaviour
             starts[i] = go != null ? go.transform.position : target;
         }
 
-        // ➤ Camlara hasar ver
+        // ➤ Cam ve kutulara hasar ver (aynı pozisyona sadece 1 kez)
+        HashSet<Vector2Int> damagedPositions = new();
+
         foreach (var item in items)
         {
             if (item == null) continue;
             var bi = item.GetComponent<BalloonItem>();
             if (bi == null) continue;
 
-            // 4 yön kontrolü
             Vector2Int[] directions = new Vector2Int[]
             {
-            new Vector2Int(1, 0),
-            new Vector2Int(-1, 0),
-            new Vector2Int(0, 1),
-            new Vector2Int(0, -1)
+                new Vector2Int(1, 0),
+                new Vector2Int(-1, 0),
+                new Vector2Int(0, 1),
+                new Vector2Int(0, -1)
             };
 
             foreach (var dir in directions)
@@ -62,8 +63,11 @@ public class MergeManager : MonoBehaviour
 
                 if (nx < 0 || nx >= board.width || ny < 0 || ny >= board.height) continue;
 
-                board.breakableManager.TryDamageBlock(nPos);
-
+                if (!damagedPositions.Contains(nPos))
+                {
+                    board.breakableManager.TryDamageBlock(nPos);
+                    damagedPositions.Add(nPos);
+                }
             }
         }
 
@@ -96,12 +100,14 @@ public class MergeManager : MonoBehaviour
         // ➤ Special item spawn
         if (specialPrefab != null)
         {
-            // Pozisyonu hemen kilitle → drop engelleme
             if (board.allBalloons[spawnX, spawnY] != null)
-                Destroy(board.allBalloons[spawnX, spawnY]);
+            {
+                var existing = board.allBalloons[spawnX, spawnY];
+                board.allBalloons[spawnX, spawnY] = null;
 
-            // Placeholder yerine sadece 'null'a çekip doğrudan spawn çağırmak yeterli olabilir.
-            board.allBalloons[spawnX, spawnY] = null;
+                if (existing != null && existing) // hem referans hem sahnede var mı
+                    Destroy(existing);
+            }
             spawner.SpawnSpecial(specialPrefab, spawnX, spawnY);
 
             spawner.SpawnSpecial(specialPrefab, spawnX, spawnY);

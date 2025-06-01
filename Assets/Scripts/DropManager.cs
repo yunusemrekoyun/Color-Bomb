@@ -51,9 +51,14 @@ public class DropManager : MonoBehaviour
                         current.transform.position = dest;
                     }
 
-                    emptyY++;
-                    while (emptyY < board.height && board.blockedPositions.Exists(p => p.x == x && p.y == emptyY))
+                    do
+                    {
                         emptyY++;
+                    } while (emptyY < board.height && (
+      board.blockedPositions.Exists(p => p.x == x && p.y == emptyY) ||
+      board.breakableManager.glassHealthDict.ContainsKey(new Vector2Int(x, emptyY)) ||
+      board.breakableManager.boxHealthDict.ContainsKey(new Vector2Int(x, emptyY))
+  ));
                 }
             }
 
@@ -64,7 +69,12 @@ public class DropManager : MonoBehaviour
                 var existing = board.allBalloons[x, y];
                 bool isFrozenHere = existing != null && existing.GetComponent<BalloonItem>()?.isFrozen == true;
 
+                // Ek kontrol: Bu karede SpecialItem bile varsa balon doğurma!
+                bool hasSpecialHere = board.allBalloons[x, y] != null &&
+                                      board.allBalloons[x, y].GetComponent<SpecialItem>() != null;
+
                 if (existing == null &&
+                    !hasSpecialHere &&
                     !board.blockedPositions.Exists(p => p.x == x && p.y == y) &&
                     !board.breakableManager.glassHealthDict.ContainsKey(pos) &&
                     !board.breakableManager.boxHealthDict.ContainsKey(pos) &&
