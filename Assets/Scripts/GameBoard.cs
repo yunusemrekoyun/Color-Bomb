@@ -11,7 +11,7 @@ public struct GlassPosition { public int x, y; }
 public struct BoxPosition { public int x, y; }
 
 public class GameBoard : MonoBehaviour
-{
+{//dfşvöşdöfbşdlöfböl
     [Header("▶ Hamle Ayarları")]
     [Tooltip("Oyuncuya bu sahnede verilecek toplam hamle sayısı")]
     public int maxMoves = 20;
