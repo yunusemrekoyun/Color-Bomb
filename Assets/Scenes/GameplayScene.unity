@@ -473,7 +473,7 @@ MonoBehaviour:
     count: 3
     remaining: 0
   - prefab: {fileID: 8621478068125450708, guid: 367a0d57e748046ff912263331968581, type: 3}
-    count: 3
+    count: 20
     remaining: 0
   - prefab: {fileID: 1077231078632946371, guid: 36b7f0b4807984b97b00f4f4e23fad70, type: 3}
     count: 3
@@ -858,13 +858,13 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222527934}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 52dd074569a9a484589f961c31a6daa9, type: 3}
   m_Resource: {fileID: 8300000, guid: 52dd074569a9a484589f961c31a6daa9, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.179
   m_Pitch: 1
   Loop: 1
   Mute: 0
