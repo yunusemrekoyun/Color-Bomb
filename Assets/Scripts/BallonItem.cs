@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class BalloonItem : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class BalloonItem : MonoBehaviour
     public bool isFrozen = false;
     public int x;
     public int y;
+
+    private Vector3 touchStart, touchEnd;
 
     private void Start()
     {
@@ -20,29 +23,41 @@ public class BalloonItem : MonoBehaviour
         if (hintManager == null) Debug.LogError("HintManager bulunamadı!");
     }
 
-#if UNITY_EDITOR
-    private Vector3 touchStart, touchEnd;
-
     private void OnMouseDown()
     {
-        Debug.Log($"[BalloonItem] OnMouseDown: {gameObject.name}");
-        touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        touchStart.z = 0f;
+        if (isFrozen) return;
+        touchStart = Input.mousePosition;
     }
 
     private void OnMouseUp()
     {
-        if (isFrozen)
-        {
-            Debug.Log($"🚫 Bu balon donmuş ve hareket ettirilemez: ({x},{y})");
-            return;
-        }
-
-        touchEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        touchEnd.z = 0f;
-        HandleSwipe(touchEnd - touchStart);
+        if (isFrozen) return;
+        touchEnd = Input.mousePosition;
+        Vector2 delta = Camera.main.ScreenToWorldPoint(touchEnd) - Camera.main.ScreenToWorldPoint(touchStart);
+        HandleSwipe(delta);
     }
-#endif
+
+    private void Update()
+    {
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            Vector3 worldTouch = Camera.main.ScreenToWorldPoint(touch.position);
+            worldTouch.z = 0f;
+
+            if (touch.phase == TouchPhase.Began)
+            {
+                touchStart = worldTouch;
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                touchEnd = worldTouch;
+                Vector2 delta = touchEnd - touchStart;
+                HandleSwipe(delta);
+            }
+        }
+    }
 
     private void HandleSwipe(Vector2 delta)
     {
@@ -70,11 +85,11 @@ public class BalloonItem : MonoBehaviour
 
     public void MoveTo(Vector3 target)
     {
-        StopCoroutine("MoveRoutine"); // sadece kendi coroutine'ini durdur
+        StopCoroutine("MoveRoutine");
         StartCoroutine("MoveRoutine", target);
     }
 
-    private System.Collections.IEnumerator MoveRoutine(Vector3 target)
+    private IEnumerator MoveRoutine(Vector3 target)
     {
         float t = 0f;
         Vector3 start = transform.position;

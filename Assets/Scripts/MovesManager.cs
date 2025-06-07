@@ -9,6 +9,8 @@ public class MovesManager : MonoBehaviour
 
     private GameBoard board;
     private int remainingMoves;
+    [Header("▶ Panel Referansları")]
+    public LosePanelController losePanelController;
 
     private void Awake()
     {
@@ -16,7 +18,11 @@ public class MovesManager : MonoBehaviour
         if (board == null)
             Debug.LogError("GameBoard bulunamadı!");
     }
-
+    public void InitializeMoves(int moves)
+    {
+        remainingMoves = moves;
+        UpdateMovesUI();
+    }
     private void Start()
     {
         remainingMoves = board.maxMoves;
@@ -34,7 +40,18 @@ public class MovesManager : MonoBehaviour
         UpdateMovesUI();
 
         if (remainingMoves == 0)
+        {
             Debug.Log("Hamle hakkı bitti");
+
+            if (losePanelController != null)
+            {
+                losePanelController.ShowLose();
+            }
+            else
+            {
+                Debug.LogError("❌ LosePanelController referansı atanmadı!");
+            }
+        }
     }
 
     private void UpdateMovesUI()

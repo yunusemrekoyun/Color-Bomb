@@ -8,20 +8,22 @@ public class LevelLayoutController : MonoBehaviour
 
     void Start()
     {
-
         LevelButton[] buttons = GetComponentsInChildren<LevelButton>();
+        int unlocked = PlayerPrefs.GetInt("unlockedLevel", 1); // default 1
 
         foreach (LevelButton btn in buttons)
         {
-            btn.SetStars(btn.levelNumber % 4); // 0–3 arasýnda yýldýz verir, test için
-            string state = "locked";
+            int lvl = btn.levelNumber;
 
-            if (btn.levelNumber < playerCurrentLevel)
-                state = "completed";
-            else if (btn.levelNumber == playerCurrentLevel)
-                state = "current";
-            else if (btn.levelNumber == playerCurrentLevel + 1)
-                state = "target";
+            // 1) YÄ±ldÄ±zlarÄ± kayÄ±ttan oku
+            int savedStars = PlayerPrefs.GetInt($"level{lvl}_stars", 0);
+            btn.SetStars(savedStars);
+
+            // 2) State ayarla
+            string state = lvl < unlocked ? "completed"
+                         : lvl == unlocked ? "current"
+                         : lvl == unlocked + 1 ? "target"
+                         : "locked";
 
             btn.lockedSprite = lockedSprite;
             btn.completedSprite = completedSprite;

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Match 3 Game Assets_0: -3559284704731985227
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

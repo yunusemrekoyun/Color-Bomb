@@ -1,0 +1,21 @@
+{
+  "blockedPositions": [
+    { "x": 3, "y": 4 },
+    { "x": 4, "y": 4 }
+  ],
+  "balloonPrefabs": ["RedBallonItem", "GreenBallonItem"],
+  "scoreMultiplier": 10,
+  "maxMoves": 20,
+  "glassTiles": [
+    { "x": 2, "y": 2 },
+    { "x": 5, "y": 6 }
+  ],
+  "boxTiles": [
+    { "x": 1, "y": 7 },
+    { "x": 6, "y": 1 }
+  ],
+  "destroyTasks": [
+    { "prefab": "RedBallonItem", "count": 5 },
+    { "prefab": "GreenBallonItem", "count": 5 }
+  ]
+}

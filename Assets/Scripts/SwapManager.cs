@@ -11,7 +11,8 @@ public class SwapManager : MonoBehaviour
 
     public GameObject focusEffectPrefab;
     public GameObject explosionEffectPrefab;
-
+    private Queue<(SpecialItem item, int x, int y)> specialTriggerQueue = new();
+    private bool isTriggeringQueue = false;
     private void Awake()
     {
         board = GetComponent<GameBoard>();
@@ -42,7 +43,19 @@ public class SwapManager : MonoBehaviour
 
         StartCoroutine(HandlePostSwap(b1, b2, x1, y1, x2, y2));
     }
+    private IEnumerator ProcessSpecialTriggerQueue()
+    {
+        isTriggeringQueue = true;
 
+        while (specialTriggerQueue.Count > 0)
+        {
+            var (item, x, y) = specialTriggerQueue.Dequeue();
+            yield return StartCoroutine(TriggerSpecial(item, x, y));
+            yield return new WaitForSeconds(0.1f); // küçük gecikme zincirler için güzel olur
+        }
+
+        isTriggeringQueue = false;
+    }
     private Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(x * board.spacing + board.offsetX, y * board.spacing + board.offsetY, 0);
@@ -217,39 +230,47 @@ public class SwapManager : MonoBehaviour
         yield return null;
     }
 
- private void TryDestroyAt(int x, int y, SpecialItem currentItem = null)
-{
-    if (x < 0 || y < 0 || x >= board.width || y >= board.height) return;
-
-    // ➤ Eğer burada cam veya kutu varsa, sadece hasar ver ve balona dokunma
-    if (board.breakableManager.HasBlock(x, y))
+    private void TryDestroyAt(int x, int y, SpecialItem currentItem = null)
     {
-        board.breakableManager.TryDamageBlock(new Vector2Int(x, y));
-        return;
-    }
+        if (x < 0 || y < 0 || x >= board.width || y >= board.height) return;
 
-    var obj = board.allBalloons[x, y];
-    if (obj == null) return;
+        if (board.breakableManager.HasBlock(x, y))
+        {
+            board.breakableManager.TryDamageBlock(new Vector2Int(x, y));
+            return;
+        }
 
-    var special = obj.GetComponent<SpecialItem>();
-    if (special != null && special != currentItem)
-    {
+        var obj = board.allBalloons[x, y];
+        if (obj == null) return;
+
+        // 💡 GÖREV GÜNCELLEME BURADA
+        var taskManager = FindFirstObjectByType<TaskManager>();
+        if (taskManager != null)
+        {
+            taskManager.OnItemDestroyed(obj);
+        }
+
+        var special = obj.GetComponent<SpecialItem>();
+        if (special != null && special != currentItem)
+        {
+            board.allBalloons[x, y] = null;
+            specialTriggerQueue.Enqueue((special, x, y));
+            if (!isTriggeringQueue)
+                StartCoroutine(ProcessSpecialTriggerQueue());
+        }
+
+        if (focusEffectPrefab != null)
+        {
+            GameObject fx = Instantiate(focusEffectPrefab, obj.transform.position, Quaternion.identity);
+            Destroy(fx, 1f);
+        }
+        if (explosionEffectPrefab != null)
+        {
+            GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
+            Destroy(fx, 1f);
+        }
+
         board.allBalloons[x, y] = null;
-        StartCoroutine(TriggerSpecial(special, x, y));
+        Destroy(obj);
     }
-
-    if (focusEffectPrefab != null)
-    {
-        GameObject fx = Instantiate(focusEffectPrefab, obj.transform.position, Quaternion.identity);
-        Destroy(fx, 1f);
-    }
-    if (explosionEffectPrefab != null)
-    {
-        GameObject fx = Instantiate(explosionEffectPrefab, obj.transform.position, Quaternion.identity);
-        Destroy(fx, 1f);
-    }
-
-    board.allBalloons[x, y] = null;
-    Destroy(obj);
-}
 }

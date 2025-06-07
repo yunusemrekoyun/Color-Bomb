@@ -1,0 +1,38 @@
+{
+  "blockedPositions": [
+    { "x": 1, "y": 3 },
+    { "x": 2, "y": 5 },
+    { "x": 4, "y": 2 },
+    { "x": 6, "y": 7 },
+    { "x": 7, "y": 4 }
+  ],
+  "balloonPrefabs": [
+    "BlackBallonItem",
+    "BlueBallonItem",
+    "PinkBallonItem",
+    "OrangeBallonItem",
+    "PurpleBallonItem",
+    "YellowBallonItem",
+    "GreenBallonItem",
+    "RedBallonItem"
+  ],
+  "scoreMultiplier": 15,
+  "maxMoves": 16,
+  "glassTiles": [
+    { "x": 0, "y": 4 },
+    { "x": 3, "y": 7 },
+    { "x": 7, "y": 7 },
+    { "x": 4, "y": 0 }
+  ],
+  "boxTiles": [
+    { "x": 1, "y": 1 },
+    { "x": 6, "y": 6 },
+    { "x": 5, "y": 3 },
+    { "x": 2, "y": 8 }
+  ],
+  "destroyTasks": [
+    { "prefab": "BoxTile_0", "count": 3 },
+    { "prefab": "PinkBallonItem", "count": 12 },
+    { "prefab": "IceBlock_0", "count": 3 }
+  ]
+}

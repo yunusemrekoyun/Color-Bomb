@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using UnityEngine.SceneManagement;
 public class LevelButton : MonoBehaviour
 {
 
     public int levelNumber;
-  
+
 
     public Image iconImage;
     public TMP_Text levelText;
@@ -16,7 +16,7 @@ public class LevelButton : MonoBehaviour
     public Sprite currentSprite;
     public Sprite targetSprite;
 
-    public Image[] starImages; // 3 yýldýzý Inspector üzerinden baðlayacaðýz
+    public Image[] starImages; // 3 yï¿½ldï¿½zï¿½ Inspector ï¿½zerinden baï¿½layacaï¿½ï¿½z
 
     private Button button;
 
@@ -55,23 +55,29 @@ public class LevelButton : MonoBehaviour
     {
         for (int i = 0; i < starImages.Length; i++)
         {
-            starImages[i].enabled = true; // Tüm yýldýzlar görünsün
+            starImages[i].enabled = true; // Tï¿½m yï¿½ldï¿½zlar gï¿½rï¿½nsï¿½n
 
             Color color = starImages[i].color;
 
             if (i < starCount)
-                color.a = 1f; // Tam opak (aktif yýldýz)
+                color.a = 1f; // Tam opak (aktif yï¿½ldï¿½z)
             else
-                color.a = 80f / 255f; // Saydamlaþtýr (boþ yýldýz)
+                color.a = 80f / 255f; // Saydamlaï¿½tï¿½r (boï¿½ yï¿½ldï¿½z)
 
             starImages[i].color = color;
         }
     }
 
-
     void OnClick()
     {
-        int selectedWorld = PlayerPrefs.GetInt("SelectedWorld", 0);
-        Debug.Log($"World {selectedWorld + 1} - Level {levelNumber} sahnesine gidiliyor (simülasyon)");
+        // SeÃ§ilen level numarasÄ±na gÃ¶re JSON anahtarÄ±nÄ± oluÅŸtur
+        string key = $"level{levelNumber}";
+
+        // PlayerPrefsâ€™e kaydet
+        PlayerPrefs.SetString("SelectedLevelJson", key);
+        PlayerPrefs.Save();
+
+        // Oyun sahnesini (GamePlayScene) yÃ¼kle
+        SceneManager.LoadScene("GameplayScene");
     }
 }

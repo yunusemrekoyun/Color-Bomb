@@ -98,11 +98,17 @@ public class TaskManager : MonoBehaviour
             StartCoroutine(ShowVictoryDelayed());
         }
     }
-/// <summary>
-/// 
+    /// <summary>
+    /// 
 
     private IEnumerator ShowVictoryDelayed()
     {
+        var scoreManager = ScoreManager.Instance;
+        var scoreFillBar = FindFirstObjectByType<ScoreFillBar>();
+        var gameBoard = FindFirstObjectByType<GameBoard>();
+
+        Debug.Log($"[Debug] currentScore={scoreManager.currentScore}, maxScore={scoreFillBar.maxScore}, multiplier={gameBoard.scoreMultiplier}, fill={scoreFillBar.GetCurrentFill():0.00}");
+
         // ✅ fillAmount'ın güncellenmesini bekle
         yield return new WaitForSeconds(0.5f);
 
@@ -112,11 +118,18 @@ public class TaskManager : MonoBehaviour
     }
     private int CalculateStarCount()
     {
+        // 1) Skoru al
+        int score = ScoreManager.Instance.currentScore;
+        // 2) MaxScore ve multiplier değerlerini al
         var bar = FindFirstObjectByType<ScoreFillBar>();
-        if (bar == null) return 0;
+        var board = FindFirstObjectByType<GameBoard>();
+        int maxScore = bar != null ? bar.maxScore : 100;
+        int multiplier = board != null ? board.scoreMultiplier : 1;
 
-        float fill = bar.GetCurrentFill(); // Aşağıda göstereceğim
+        // 3) Fill oranını anında hesapla
+        float fill = Mathf.Clamp01((float)score / (maxScore * multiplier));
 
+        // 4) Eşiklere göre yıldız sayısını döndür
         if (fill >= 1f) return 3;
         else if (fill >= 0.66f) return 2;
         else if (fill >= 0.33f) return 1;
