@@ -20,37 +20,95 @@ public class SaveManager : MonoBehaviour
         InitializeSave();
     }
 
+    /// <summary>
+    /// Tüm kaydı sıfırlar (hem JSON hem de PlayerPrefs için WebGL fallback).
+    /// </summary>
+    public void ResetProgress()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // WebGL: PlayerPrefs içindeki saveData anahtarını sil
+        PlayerPrefs.DeleteKey("saveData");
+        PlayerPrefs.Save();
+        Debug.Log("[SaveManager] WebGL: PlayerPrefs 'saveData' silindi.");
+#else
+        // Standart platform: diskten dosyayı sil
+        if (File.Exists(savePath))
+        {
+            File.Delete(savePath);
+            Debug.Log("[SaveManager] Disk: saveData.json silindi.");
+        }
+#endif
+        // Bellekteki veriyi default ile yeniden yükle
+        InitializeSave();
+        Debug.Log("[SaveManager] RAM verisi yeniden yüklendi.");
+    }
+
+    /// <summary>
+    /// Kaydetme altyapısını başlatır: dosya yoksa kopyalar, sonra Data'yı okur.
+    /// </summary>
     void InitializeSave()
     {
+        string json;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // WebGL: PlayerPrefs fallback
+        json = PlayerPrefs.GetString("saveData", "");
+        if (string.IsNullOrEmpty(json))
+        {
+            var txt = Resources.Load<TextAsset>("Save/saveData");
+            json = txt != null
+                ? txt.text
+                : "{\"worldCount\":3,\"levelsPerWorld\":8,\"unlockedLevels\":[1,1,1],\"stars\":[]}";
+            PlayerPrefs.SetString("saveData", json);
+            PlayerPrefs.Save();
+        }
+        Debug.Log("[SaveManager] WebGL: JSON yüklendi from PlayerPrefs.");
+#else
+        // Standart platform: disk okuma
         Debug.Log($"[SaveManager] persistentDataPath = {Application.persistentDataPath}");
         Debug.Log($"[SaveManager] persistent file exists? {File.Exists(savePath)} at {savePath}");
 
         if (!File.Exists(savePath))
         {
             var txt = Resources.Load<TextAsset>("Save/saveData");
-            Debug.Log($"[SaveManager] Resources.Load → txt is {(txt == null ? "null" : ("len=" + txt.text.Length))}");
+            Debug.Log($"[SaveManager] Resources.Load → txt is {(txt == null ? "null" : "len=" + txt.text.Length)}");
             if (txt != null)
                 File.WriteAllText(savePath, txt.text);
         }
 
-        // Son olarak dosya içeriğini bir kere loglayalım
         if (File.Exists(savePath))
         {
-            string json = File.ReadAllText(savePath);
-            Debug.Log($"[SaveManager] Loaded JSON:\n{json}");
-            Data = JsonUtility.FromJson<SaveData>(json);
+            json = File.ReadAllText(savePath);
+            Debug.Log($"[SaveManager] Disk: Loaded JSON:\n{json}");
         }
         else
         {
-            Debug.LogError("[SaveManager] save file still missing!");
+            Debug.LogError("[SaveManager] Disk: save file still missing!");
+            json = "{\"worldCount\":3,\"levelsPerWorld\":8,\"unlockedLevels\":[1,1,1],\"stars\":[]}";
         }
+#endif
+        // Ortak: Data'yı parse et
+        Data = JsonUtility.FromJson<SaveData>(json);
     }
 
+    /// <summary>
+    /// Mevcut Data'yı tekrar kaydeder.
+    /// </summary>
     public void Save()
     {
         string json = JsonUtility.ToJson(Data, true);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        PlayerPrefs.SetString("saveData", json);
+        PlayerPrefs.Save();
+        Debug.Log("[SaveManager] WebGL: JSON kaydedildi to PlayerPrefs.");
+#else
         File.WriteAllText(savePath, json);
+        Debug.Log("[SaveManager] Disk: JSON kaydedildi to saveData.json.");
+#endif
     }
+
+    // --- API Metodları ---
+
     public int GetUnlockedLevel(int world) => Data.unlockedLevels[world];
 
     public void UnlockNextLevel(int world)
@@ -74,7 +132,6 @@ public class SaveManager : MonoBehaviour
         else
             Data.stars.Add(new LevelStarEntry { worldIndex = world, levelIndex = level, stars = stars });
     }
-    // API metodları buraya gelecek...
 }
 
 [Serializable]

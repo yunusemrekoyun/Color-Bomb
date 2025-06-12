@@ -2,35 +2,40 @@ using UnityEngine;
 
 public class LevelLayoutController : MonoBehaviour
 {
-    public int playerCurrentLevel = 2;
-
-    public Sprite lockedSprite, completedSprite, currentSprite, targetSprite;
+    [Header("Button Sprites")]
+    public Sprite lockedSprite;
+    public Sprite completedSprite;
+    public Sprite currentSprite;
 
     void Start()
     {
-        LevelButton[] buttons = GetComponentsInChildren<LevelButton>();
-        int unlocked = PlayerPrefs.GetInt("unlockedLevel", 1); // default 1
+        // Hangi dünya seçili?
+        int world = PlayerPrefs.GetInt("SelectedWorld", 0);
+        // Bu dünyada en yüksek açılan level
+        int unlocked = SaveManager.Instance.GetUnlockedLevel(world);
 
-        foreach (LevelButton btn in buttons)
+        // Tüm LevelButton’ları sırala
+        foreach (var btn in GetComponentsInChildren<LevelButton>())
         {
             int lvl = btn.levelNumber;
 
-            // 1) Yıldızları kayıttan oku
-            int savedStars = PlayerPrefs.GetInt($"level{lvl}_stars", 0);
-            btn.SetStars(savedStars);
+            // 1) Yıldız sayısını SaveManager’dan çek
+            int stars = SaveManager.Instance.GetStars(world, lvl);
+            btn.SetStars(stars);
 
-            // 2) State ayarla
-            string state = lvl < unlocked ? "completed"
-                         : lvl == unlocked ? "current"
-                         : lvl == unlocked + 1 ? "target"
-                         : "locked";
+            // 2) Durumu belirle
+            string state;
+            if (lvl < unlocked) state = "completed";
+            else if (lvl == unlocked) state = "current";
+            else state = "locked";
 
+            // 3) Sprite’ları set et
             btn.lockedSprite = lockedSprite;
             btn.completedSprite = completedSprite;
             btn.currentSprite = currentSprite;
-            btn.targetSprite = targetSprite;
 
+            // 4) Uygula
             btn.SetState(state);
         }
-    }
-}
+    } 
+}   

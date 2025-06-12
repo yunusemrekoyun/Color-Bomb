@@ -1,15 +1,22 @@
+using System.IO;  // eÄŸer doÄŸrudan File kullanmak istersen
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ResetProgressButton : MonoBehaviour
 {
     public void ResetAllProgress()
     {
-        PlayerPrefs.DeleteAll(); // Tüm kayıtları siler
+        // 1) PlayerPrefsâ€™i temizle
+        PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
-        Debug.Log("Tüm ilerleme verileri sıfırlandı.");
+        // 2) SaveManager ile JSONâ€™u ve RAMâ€™i sÄ±fÄ±rla
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.ResetProgress();
 
-        // İsteğe bağlı: Sahneyi yeniden yükle (refresh gibi)
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        Debug.Log("âš ï¸ TÃ¼m ilerleme verileri sÄ±fÄ±rlandÄ±.");
+
+        // 3) Sahneyi yeniden yÃ¼kle (yeniden baÅŸlat)
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
